@@ -6,9 +6,9 @@
 - Go：https://github.com/overcomputer/Golang  
 - Java：整理中
 - Python：整理中
+- 算法与数据结构：整理中
 - 数据库：整理中
 - Linux：整理中
-- 算法与数据结构：整理中
 - 大数据：整理中
 
 ##  Go书籍
