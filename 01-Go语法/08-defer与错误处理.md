@@ -42,23 +42,47 @@ defer最佳实践：用于关闭资源
 connect = openDatabase()
 defer connect.close()
 ```
-#### 1.2 error接口
-Go引入了一个关于错误处理的标准模式，即error接口：
+#### 1.2 使用defer与recover处理错误
+```go
+func test(num1 int, num2 int){
+	defer func(){
+		err := recover()	//recover内置函数，可以捕获异常
+		if err != nil {
+			fmt.Println("err=", err);
+		}
+	}()
+	fmt.Println(num1/num2)
+}
+
+func main() {
+
+	test(2,0)
+
+}
 ```
-type error interface {
-	Error() string
+#### 1.3 自定义错误
+Go 程序中，也支持自定义错误， 使用 errors.New 和 panic 内置函数。
+- errors.New("错误说明") , 会返回一个 error 类型的值，表示一个错误
+- panic 内置函数 ,接收一个 interface{}类型的值(也就是任何值了)作为参数。可以接收 error 类
+   型的变量，输出错误信息，并退出程序
+```go
+//假定一个读取配置的函数，如果文件名不正确返回一个自定义错误
+func readConfig(name string) (err error){
+	if name == "conf" {
+		//后续操作
+		return nil
+	} else {
+		return errors.New("filename not correct ")
+	}
 }
 
-//相关方法
-type errorString struct {
-	texxt string
-}
-func New(text string) error {
-	return &errorString(text)
-}
-func (e *errorString) Error() string{
-	return e.text
-}
+func main() {
 
-//fmt的Errorf函数也可以生成error类型
+	err := readConfig("config")
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println("继续执行...")
+
+}
 ```
