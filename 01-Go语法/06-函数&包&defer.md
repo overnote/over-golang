@@ -83,42 +83,14 @@ x, y := func(i,j int) (max,min int) {
 fmt.Println(x + ' ' + y)
 
 ```
-#### 1.5 闭包
-在Go中，函数也可以被认为是一种数据类型，可以通过type来定义，类型就是所有拥有相同参数、相同返回值的一种类型，根据该特性，可以实现函数传参，有别于以往的函数调用形式。
-```
-//声明一个函数类型，func后没有函数名
-type Func1 func(int, int) int
-//定义符合上述类型的函数 f
-func fn(a, b int,f Func1) (result int) {
-   result = f (a, b)
-   return
-}
-```
-在Go中，所有的匿名函数都可以视为闭包。闭包即：捕获了和它在同一作用于的其他常量和变量，那么这样会造成一个影响：无论在程序什么地方调用闭包，闭包都能使用这些常量或者变量！
-```
-func test() func() int {
-   var x int
-   return func() int{
-      x++
-      return x * x
-   }
-}
-
-func main()  {
-   f := test()
-   fmt.Println(f())      //1
-   fmt.Println(f())      //4
-   fmt.Println(f())      //9
-}
-```
-#### 1.6 Go函数特性总结
+#### 1.5 Go函数特性总结
 支持有名称的返回值；
 不支持默认值参数；
 不支持重载；
 不支持命名函数嵌套，匿名函数可以嵌套；
 Go函数从实参到形参的传递永远是值拷贝，有时函数调用后实参指向的值发生了变化，是因为参数传递的是指针的拷贝，实参是一个指针变量，传递给形参的是这个指针变量的副本，实质上仍然是值拷贝；
 Go函数支持不定参数；
-#### 1.7 函数类型
+#### 1.6 函数类型
 函数类型：函数去掉函数名、参数名和{}后的结果，使用%T打印该结果。
 两个函数类型相同的前提是：拥有相同的形参列表和返回值列表，且列表元素的次序、类型都相同，形参名可以不同。
 定义了函数类型，就可以使用该类型进行传参。
@@ -140,7 +112,7 @@ func Test(f MyMath, a , b int) int{
 }
 ```
 通常我们可以把函数类型当做一种引用类型，实际函数类型变量和函数名都可以当做指针变量，只想函数代码开始的位置，没有初始化的函数默认值是nil。
-#### 1.8 匿名函数
+#### 1.7 匿名函数
 匿名函数可以看做函数字面量，所有直接使用函数类型变量的地方都可以由匿名函数代替。匿名函数可以直接赋值给函数变量，可以当做实参，也可以作为返回值使用，还可以直接被调用。
 ```
 package main
@@ -196,7 +168,7 @@ func main() {
 
 }
 ```
-#### 1.9 init函数
+#### 1.8 init函数
 Go语言中，除了可以在全局声明中初始化实体，也可以在init函数中初始化。init函数是一个特殊的函数，它会在包完成初始化后自动执行，执行优先级高于main函数，并且不能手动调用init函数，每一个文件有且仅有一个init函数，初始化过程会根据包的以来关系顺序单线程执行。
 ```go
 package main
@@ -234,3 +206,108 @@ import (
 - 在 import 包时，路径从 $GOPATH 的 src 下开始，不用带 src , 编译器会自动从 src 下开始引入
 - 为了让其它包的文件，可以访问到本包的函数，则该函数名的首字母需要大写，类似其它语言 的 public ,这样才能跨包访问
 - 在访问其它包函数，变量时，其语法是 包名.函数名
+
+## 三 闭包
+
+#### 3.1 闭包案例
+
+```go
+func fn1(a int) func(i int) int {
+	return func(i int) int {
+		print(&a, a)
+		return a
+	}
+}
+
+func main() {
+
+	f := fn1(1)			//输出地址
+	g := fn1(2)			//输出地址
+	
+	fmt.Println(f(1))		//输出1
+	fmt.Println(f(1))		//输出1
+
+	fmt.Println(g(2))		//输出2
+	fmt.Println(g(2))		//输出2
+
+}
+```
+
+## 四 函数参数传递
+#### 4.1 值传递和引用传递
+不管是值传递还是引用传递，传递给函数的都是变量的副本，不同的是，值传递的是值的
+拷贝，引用传递的是地址的拷贝，一般来说，地址拷贝效率高，因为数据量小，而值拷贝决定拷贝的 数据大小，数据越大，效率越低。
+如果希望函数内的变量能修改函数外的变量，可以传入变量的地址&，函数内以指针的方式操作变量。
+## 五 常用函数
+#### 5.1 常用字符串函数
+```go
+//字符串的字节长度：汉字占用3个字节，字符占据1个字节
+len("hello")
+
+//字符串遍历：可以同时处理中文问题
+r := []rune("hello北京")
+fmt.Println(r[2])	//	查看第3个
+
+//字符串转整数
+n, err := strconv.Atoi("hello")
+
+//整数转字符串
+str = strconv.Itoa(12345)
+
+//字符串转[]byte
+var bytes = []byte("hello")
+
+// []byte 转 字符串
+ str = string([]byte{97, 98, 99})
+
+//10进制转2 8 16进制
+str = strconv.FormatInt(123, 2) // 2-> 8 , 16
+
+//查找子字符串是否在指定的字符串中
+ strings.Contains("seafood", "foo") //true
+
+//统计一个字符串有几个指定的子串
+strings.Count("ceheese", "e") //4
+
+//不区分大小写的字符串比较(==是区分字母大小写的)
+fmt.Println(strings.EqualFold("abc", "Abc")) // true
+
+//返回子串在字符串第一次出现的 index 值，如果没有返回-1
+strings.Index("NLT_abc", "abc") // 4
+
+// 返回子串在字符串最后一次出现的 index，如没有返回-1
+strings.LastIndex("go golang", "go")
+
+// 将指定的子串替换成 另外一个子串
+strings.Replace("go go hello", "go", "go 语言", n)  //n 可以指 定你希望替换几个，如果 n=-1 表示全部替换
+
+// 按照指定的某个字符，为分割标识，将一个字符串拆分成字符串数组
+strings.Split("hello,wrold,ok", ",")
+
+// 将字符串的字母进行大小写的转换
+strings.ToLower("Go") // go strings.ToUpper("Go") // GO
+
+// 将字符串左右两边的空格去掉
+strings.TrimSpace(" tn a lone gopher ntrn ")
+
+// 将字符串左右两边指定的字符去掉 同样有 TrimLeft和 TrimRight
+strings.Trim("! hello! ", " !")
+
+// 判断字符串是否以指定的字符串开头
+strings.HasPrefix("ftp://192.168.10.1", "ftp") // true
+
+// 判断字符串是否以指定的字符串结束
+strings.HasSuffix("NLT_abc.jpg", "abc") //false
+```
+#### 5.2 时间函数
+```go
+now := time.Now()
+
+fmt.Printf(now.Format("2018-10-10 15:04:05"))
+fmt.Printf(now.Format("2018-10-10"))
+fmt.Printf(now.Format("15:04:05"))
+
+//时间戳
+now.Unix()		//10位 从1970年J 1 到现在的秒数
+now.Unixnano()	//20位 同上，单位是纳秒
+```

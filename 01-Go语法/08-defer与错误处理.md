@@ -62,26 +62,3 @@ func (e *errorString) Error() string{
 
 //fmt的Errorf函数也可以生成error类型
 ```
-## 二 闭包
-#### 2.1 闭包案例
-```
-func fn1(a int) func(i int) int {
-	return func(i int) int {
-		print(&a, a)
-		return a
-	}
-}
-
-func main() {
-
-	f := fn1(1)			//输出地址
-	g := fn1(2)			//输出地址
-	
-	fmt.Println(f(1))		//输出1
-	fmt.Println(f(1))		//输出1
-
-	fmt.Println(g(2))		//输出2
-	fmt.Println(g(2))		//输出2
-
-}
-```
