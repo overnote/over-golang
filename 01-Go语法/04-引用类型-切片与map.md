@@ -138,6 +138,10 @@ func main() {
 
 }
 ```
+注意：key 可以是什么类型？
+golang 中的 map，的 key 可以是很多种类型，比如 bool, 数字，string, 指针, channel , 还可以是只 包含前面几个类型的 接口, 结构体, 数组。  
+通常 key 为 int 、string。  
+注意: slice， map 还有 function 不可以，因为他们不能使用 == 来判断
 #### 2.2 map的使用
 map的读取和设置也类似slice一样，通过key来操作，只是slice的index只能是｀int｀类型，而map多了很多类型，可以是int，可以是string及所有完全定义了==与!=操作的类型。
 ```
@@ -152,6 +156,7 @@ numbers["three"] = 3
 fmt.Println("第三个数字是: ", numbers["three"]) // 读取数据
 // 打印出来如:第三个数字是: 3
 ```
+map的遍历：同数组一样，使用for-range 的结构遍历  
 
 注意：
 map是无序的，每次打印出来的map都会不一样，它不能通过index获取，而必须通过key获取；
