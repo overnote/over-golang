@@ -149,8 +149,11 @@ channel只支持 for--range 的方式进行遍历，请注意两个细节
 	}
 ```
 #### 2.3 channel只读与只写
-channel可以声明为只读，或者只写性质
-
+默认情况下管道是双向的，但是也可以声明为为只读，或者只写性质。
+```go
+	var chan1 chan<- int		//只写
+	var chan2 <-chan int 		//只读
+```
 
 #### 2.4 单向channel
 单向channel只能用来发数据或者接受数据，事实上由于不能让goroutine锁死，channel必须是双向的，这里的单向channel只是对其使用的限制。
@@ -237,6 +240,10 @@ func main(){
 	fibonacci(ch, quit)
 
 }
+```
+select 案例：
+```go
+
 ```
 #### 3.2 channel超时解决
 在并发编程的通信过程中，最需要处理的是超时问题，即向channel写数据时发现channel已满，或者取数据时发现channel为空，如果不正确处理这些情况，会导致goroutine锁死，例如：
