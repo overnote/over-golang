@@ -27,5 +27,4 @@ https://github.com/ruyuejun/note/
         《Go语言高级编程》：https://github.com/chai2010/advanced-go-programming-book
         《深入解析Go》：https://books.studygolang.com/go-internals/
         《Go Web编程》(astaxie)：https://github.com/astaxie/build-web-application-with-golang/tree/master/zh
-        《go-mega》：https://github.com/bonfy/go-mega
 ```
