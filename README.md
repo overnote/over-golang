@@ -15,11 +15,11 @@ https://github.com/ruyuejun/note/
 ## Go语言推荐资料
 ```
 基础篇：
-        《Go语言从入门到进阶实战》  - 语法基础
-        《Go语言学习笔记》- 由浅入深，适合初学与深入
-        《GO语言程序设计》Mark- 大量Golang奇淫技巧 
+        《Go语言从入门到进阶实战》               - 语法基础
+        《Go语言学习笔记》                      - 由浅入深，适合初学与深入
+        《GO语言程序设计》Mark                  - 大量Golang奇淫技巧 
 开发篇：
-        《Go Web编程》                 
+        《GoWeb编程》                 
         《Go并发编程》
 资料收集：
         《Go语言标准库》：https://books.studygolang.com/The-Golang-Standard-Library-by-Example/
@@ -27,4 +27,5 @@ https://github.com/ruyuejun/note/
         《Go语言高级编程》：https://github.com/chai2010/advanced-go-programming-book
         《深入解析Go》：https://books.studygolang.com/go-internals/
         《Go Web编程》(astaxie)：https://github.com/astaxie/build-web-application-with-golang/tree/master/zh
+        《Mastering GO》：https://github.com/hantmac/Mastering_Go_ZH_CN
 ```
