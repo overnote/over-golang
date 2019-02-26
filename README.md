@@ -1,4 +1,4 @@
-## 说明
+## 前言
 
 推荐书籍地址：
 https://github.com/ruyuejun/north-star/  
@@ -14,6 +14,8 @@ https://github.com/overcomputer
 - Python：整理中
 - Linux：整理中
 - 算法：https://github.com/overcomputer/Algorithm
+
+## 说明
 
 ## 感谢
 
