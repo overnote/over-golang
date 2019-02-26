@@ -1,4 +1,229 @@
-# 8.4 RPC
+## 一 RPC编程简介
+Socket与HTTP编程都是客户端与服务端之间的通信，但是有些应用使用类似常规的函数调用的方式来完成想要的功能。RPC编程中，客户端就像调用本地函数一样，把参数打包后通过网络传递给服务器，服务器解包到处理过程中执行，并将执行结果返回给客户端。
+RPC:远程过程调用协议，是一种通过网络从远程计算机程序上请求服务，而不需要了解底层网络技术的协议，它假定某些传输协议存在，如TCP或UDP，以便为通信程序之间携带信息数据，通过它可以使函数调用模式网络化。在OSI网络通信模型中，RPC跨越了传输层和应用层。RPC使得开发包括网络分布式多程序在内的应用程序更加容易。
+运行时，一次客户机对服务器的RPC调用，步骤如下：
+> 1 调用客户端句柄，执行传送参数
+> 2 调用本地系统内核发送网络消息
+> 3 消息传送到远程主机
+> 4 服务器句柄得到消息并得到参数
+> 5 执行远程过程
+> 6 返回执行结果给服务器句柄
+> 7 服务器句柄返回结果，调用远程系统内核
+> 8 消息传回本地主机
+> 9 客户句柄由内核接收消息
+> 10 客户接收句柄返回的数据
+#### 1.2 Go RPC
+Go支持三个级别的RPC：TCP,HTTP,JSONRPC,Go的RPC函数格式如下：
+```Go
+/**
+* 函数必须是导出的
+* 第一个参数是接收的参数，第二个参数是返回给客户端的参数，第二个参数必须是指针类型
+* 必须有error返回值
+*/
+func (t *T) MethodName(argType T1, replyType *T2) error
+```
+#### 1.3 HTTP RPC
+Server端：
+```Go
+type Args struct {
+	A, B int
+}
+
+type Quotient struct {
+	Quo, Rem int
+}
+
+type Arith int
+
+func (t *Arith) Multiply(args *Args, reply *int) error {
+	*reply = args.A * args.B
+	return nil
+}
+
+func (t *Arith) Divide(args *Args, quo *Quotient) error {
+	if args.B == 0 {
+		return errors.New("除数不能为0")
+	}
+	quo.Quo = args.A / args.B
+	quo.Rem = args.A % args.B
+	return nil
+}
+
+func main(){
+
+	arith := new(Arith)			//创建一个Arith的RPC服务
+	rpc.Register(arith)
+	rpc.HandleHTTP()			//注册到HTTP协议上
+
+	err := http.ListenAndServe(":1234", nil)
+
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+
+}
+```
+Client端：
+```Go
+type Args struct {
+	A, B int
+}
+
+type Quotient struct {
+	Quo, Rem int
+}
+
+func checkError(err error) {
+	if err != nil {
+		fmt.Println( "错误：%s", err.Error())
+		os.Exit(1)
+	}
+}
+
+func main(){
+
+	addr := "127.0.0.1:1234"
+
+	client, err := rpc.DialHTTP("tcp", addr)
+	checkError(err)
+
+	args := Args{17, 8}
+	var reply int
+	err = client.Call("Arith.Multiply", args, &reply)
+	checkError(err)
+	fmt.Println("Arith:%d*%d=%d\n",args.A, args.B, reply)
+
+	var quot Quotient
+	err = client.Call("Arith.Divide", args, &quot)
+	checkError(err)
+	fmt.Println("Arith:%d/%d=%d 余 %d\n",args.A, args.B, quot.Quo, quot.Rem)
+
+}
+```
+#### 1.4 TCP RPC
+与HTTP服务器不同，需要自己控制连接，当有客户端连接上来后，需要把这个连接交给RPC来处理。
+Server端：
+```Go
+type Args struct {
+	A, B int
+}
+
+type Quotient struct {
+	Quo, Rem int
+}
+
+type Arith int
+
+func (t *Arith) Multiply(args *Args, reply *int) error {
+	*reply = args.A * args.B
+	return nil
+}
+
+func (t *Arith) Divide(args *Args, quo *Quotient) error {
+	if args.B == 0 {
+		return errors.New("除数不能为0")
+	}
+	quo.Quo = args.A / args.B
+	quo.Rem = args.A % args.B
+	return nil
+}
+
+
+func checkError(err error) {
+	if err != nil {
+		fmt.Println( "错误：%s", err.Error())
+		os.Exit(1)
+	}
+}
+
+func main(){
+
+	arith := new(Arith)			//创建一个Arith的RPC服务
+	rpc.Register(arith)
+
+	tcpAddr, err := net.ResolveTCPAddr("tcp", ":1234")
+	checkError(err)
+
+	listener, err := net.ListenTCP("tcp", tcpAddr)
+	checkError(err)
+
+	for {
+		conn, err := listener.Accept()
+		if err != nil {
+			continue
+		}
+		rpc.ServeConn(conn)
+	}
+
+}
+```
+Client端：
+```Go
+//只需要修改http rpc方式如下：
+client, err := rpc.Dial("tcp", addr)
+```
+#### 1.5 JSON RPC
+Server端：
+```Go
+type Args struct {
+	A, B int
+}
+
+type Quotient struct {
+	Quo, Rem int
+}
+
+type Arith int
+
+func (t *Arith) Multiply(args *Args, reply *int) error {
+	*reply = args.A * args.B
+	return nil
+}
+
+func (t *Arith) Divide(args *Args, quo *Quotient) error {
+	if args.B == 0 {
+		return errors.New("除数不能为0")
+	}
+	quo.Quo = args.A / args.B
+	quo.Rem = args.A % args.B
+	return nil
+}
+
+
+func checkError(err error) {
+	if err != nil {
+		fmt.Println( "错误：%s", err.Error())
+		os.Exit(1)
+	}
+}
+
+func main(){
+
+	arith := new(Arith)			//创建一个Arith的RPC服务
+	rpc.Register(arith)
+
+	tcpAddr, err := net.ResolveTCPAddr("tcp", ":1234")
+	checkError(err)
+
+	listener, err := net.ListenTCP("tcp", tcpAddr)
+	checkError(err)
+
+	for {
+		conn, err := listener.Accept()
+		if err != nil {
+			continue
+		}
+		jsonrpc.ServeConn(conn)
+	}
+
+}
+```
+Client端:
+```Go
+client, err := jsonrpc.Dial("tcp", addr)
+```
+
+](# 8.4 RPC
 前面几个小节我们介绍了如何基于Socket和HTTP来编写网络应用，通过学习我们了解了Socket和HTTP采用的是类似"信息交换"模式，即客户端发送一条信息到服务端，然后(一般来说)服务器端都会返回一定的信息以表示响应。客户端和服务端之间约定了交互信息的格式，以便双方都能够解析交互所产生的信息。但是很多独立的应用并没有采用这种模式，而是采用类似常规的函数调用的方式来完成想要的功能。
 
 RPC就是想实现函数调用模式的网络化。客户端就像调用本地函数一样，然后客户端把这些参数打包之后通过网络传递到服务端，服务端解包到处理过程中执行，然后执行的结果反馈给客户端。
@@ -398,13 +623,5 @@ func main() {
 
 }
 
+)
 ```
-## 总结
-Go已经提供了对RPC的良好支持，通过上面HTTP、TCP、JSON RPC的实现,我们就可以很方便的开发很多分布式的Web应用，我想作为读者的你已经领会到这一点。但遗憾的是目前Go尚未提供对SOAP RPC的支持，欣慰的是现在已经有第三方的开源实现了。
-
-
-
-## links
-   * [目录](<preface.md>)
-   * 上一节: [REST](<08.3.md>)
-   * 下一节: [小结](<08.5.md>)
