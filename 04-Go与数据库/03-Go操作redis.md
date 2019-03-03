@@ -1,7 +1,44 @@
-## 一 Go操作redis
+## 一 Go操作Redis
 推荐驱动： https://github.com/go-redis/redis
+
+基本操作：
+```go
+package main
+
+import (
+	"fmt"
+	"github.com/garyburd/redigo/redis"
+)
+
+
+func main() {
+
+	c, err := redis.Dial("tcp", "localhost:6379")
+
+	if err != nil {
+		fmt.Println("Redis connect err:", err)
+		return
+	}
+
+	defer c.Close()
+
+	_, err = c.Do("Set", "first", "hello")
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	r, err := redis.Int(c.Do("Get", "first"))
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	fmt.Println(r)
+}	
+```
+
 ```Go
-[
 package main
 
 import (
