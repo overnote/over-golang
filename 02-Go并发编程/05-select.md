@@ -1,5 +1,88 @@
 ## 一 select
 
+#### 1.0 select示例
+
+在有多个channel时，肯定不能让其串行执行：
+
+```go
+package main
+
+import (
+	"fmt"
+	"time"
+)
+
+func fn1(ch chan string) {
+	time.Sleep(time.Second * 3)
+	ch <- "fn1111"
+}
+
+func fn2(ch chan string) {
+	time.Sleep(time.Second * 6)
+	ch <- "fn2222"
+}
+
+
+func main() {
+
+	ch1 := make(chan string)
+	ch2 := make(chan string)
+
+	go fn1(ch1)
+	go fn2(ch2)
+
+	r1 := <- ch1
+	fmt.Println("r1=", r1)
+	r2 := <- ch2
+	fmt.Println("r2=", r2)
+}	
+
+```
+
+如上所示，获取r1和r2的操作在串行执行，main函数整体耗时时间是fn2执行的时间：6秒。那么如何才能让获取ch1直接3秒钟内完成，获取ch2在6秒内完成？  
+
+```go
+package main
+
+import (
+	"fmt"
+	"time"
+)
+
+func fn1(ch chan string) {
+	time.Sleep(time.Second * 6)
+	ch <- "fn1111"
+}
+
+func fn2(ch chan string) {
+	time.Sleep(time.Second * 6)
+	ch <- "fn2222"
+}
+
+
+func main() {
+
+	ch1 := make(chan string)
+	ch2 := make(chan string)
+
+	go fn1(ch1)
+	go fn2(ch2)
+
+
+	select {
+
+	case r1 := <- ch1 :
+		fmt.Println("r1:", r1)
+
+	case r1 := <- ch1 :
+		fmt.Println("r1:", r1)
+	}
+
+}	
+```
+
+select同时监听多个channel，如果某个channel可读（有数据）则执行。如果多个channel同时可读（即上述fn1和fn2的延时时间都是3秒）那么随机读取一个channel的数据。
+
 #### 1.1 select的作用
 
 关键字select可以监听channel上的数据流动，用法与switch类似，由select开始下一个新的需选择块，每个选择条件由case语句来描述，但是在使用方面有一条限制，最大的限制是：
