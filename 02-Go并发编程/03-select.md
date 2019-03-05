@@ -81,7 +81,11 @@ func main() {
 }	
 ```
 
-select同时监听多个channel，如果某个channel可读（有数据）则执行。如果多个channel同时可读（即上述fn1和fn2的延时时间都是3秒）那么随机读取一个channel的数据。
+select同时监听多个channel，如果某个channel可读（有数据）则执行。如果多个channel同时可读（即上述fn1和fn2的延时时间都是3秒）那么随机读取一个channel的数据。  
+
+select支持default，如果所有的case分支内都没有可读数据，那么执行default。  
+
+当然，在一些场景中（for循环使用select获取channel数据），如果channel被写满，也可能会执行default。
 
 #### 1.1 select的作用
 
@@ -141,6 +145,7 @@ select 案例：
 ```go
 
 ```
+
 #### 1.2 channel超时解决
 在并发编程的通信过程中，最需要处理的是超时问题，即向channel写数据时发现channel已满，或者取数据时发现channel为空，如果不正确处理这些情况，会导致goroutine锁死，例如：
 i := <-cha
@@ -158,3 +163,10 @@ select {
     case <-timeout: //没有从-cha中取到数据，此时能从timeout中取得数据
 }
 ```
+
+#### 1.3 空select
+
+```go
+select {}
+```
+空的select唯一的功能是阻塞代码。
