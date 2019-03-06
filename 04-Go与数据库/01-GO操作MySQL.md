@@ -1,7 +1,10 @@
 ## 一 Go操作MySQL
 Go中支持MySQL的驱动目前比较多，有如下几种，有些是支持database/sql标准，而有些是采用了自己的实现接口。  
 
-推荐使用：https://github.com/go-sql-driver/mysql （Go编写，维护频繁，支持Gosql接口，底层支持keepalive）
+推荐使用：
+- https://github.com/go-sql-driver/mysql （Go编写，维护频繁，支持Gosql接口，底层支持keepalive）
+- https://github.com/jinzhu/gorm
+- https://github.com/jmoiron/sqlx
 
 代码示例：
 
