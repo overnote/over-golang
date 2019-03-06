@@ -1,5 +1,7 @@
 ## 一 Go操作Redis
-推荐驱动： https://github.com/go-redis/redis
+推荐驱动： 
+- https://github.com/go-redis/redis
+- https://github.com/gomodule/redigo
 
 基本操作：
 ```go
