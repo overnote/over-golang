@@ -1,5 +1,7 @@
-## 一 Go异常处理接口
+## 一 defer延迟执行
+
 #### 1.1 defer延迟执行修饰符
+
 在函数中，程序员经常需要创建资源(比如:数据库连接、文件句柄、锁等) ，为了在函数执行完 毕后，及时的释放资源，Go 的设计者提供 defer (延时机制)。
 ```go
 func main() {
@@ -19,6 +21,8 @@ main...
 defer2...
 defer1...
 ```
+从上述代码看出：Go语言的defer语句会将其后跟随的语句进行延迟处理，在defer归属的函数即将返回时，将延迟处理的语句按defer的逆顺序进行执行，即，先被defer的语句最后被执行。
+
 注意：在 defer 将语句放入到栈时，也会将相关的值拷贝同时入栈
 ```go
 func main() {
@@ -37,12 +41,281 @@ func main() {
 main中：num= 3
 defer中：num= 0
 ```
-defer最佳实践：用于关闭资源
+
+#### 1.2 defer最佳实践
+
+defer最佳实践：用于关闭资源，比如：`defer connect.close()`。下面列举一个常见的并发使用map的函数：
 ```go
-connect = openDatabase()
-defer connect.close()
+var (
+	mutex sync.Mutex
+	testMap = make(map[string]int)
+)
+func getMapValue(key string) int {
+
+	mutex.Lock()						//对共享资源加锁
+	value := testMap[key]
+	mutex.Unlock()
+
+	return value
+}
 ```
-#### 1.2 使用defer与recover处理错误
+上述案例是很常见的对并发map执行加锁执行的安全操作，使用defer可以对上述语义进行简化：
+```go
+var (
+	mutex sync.Mutex
+	testMap = make(map[string]int)
+)
+func getMapValue(key string) int {
+
+	mutex.Lock()						//对共享资源加锁
+	defer mutex.Unlock()
+	return testMap[key]
+}
+```
+
+defer处理资源案例：
+```go
+
+f,err := os.Open(file)
+
+if err != nil {
+	return 0
+}
+
+info,err := f.Stat()
+
+if err != nil {
+	f.Close()
+	return 0
+}
+
+//后续一系列文件操作后执行关闭
+f.Close()
+return 0;
+
+```
+使用defer优化：
+```go
+f,err := os.Open(file)
+
+if err != nil {
+	return 0
+}
+
+defer f.Close()
+
+info,err := f.Stat()
+
+if err != nil {
+	// f.Close()			//这句已经不需要了
+	return 0
+}
+
+//后续一系列文件操作后执行关闭
+// f.Close()			//这句已经不需要了
+return 0;
+```
+
+## 二 错误Error
+
+#### 2.1 Go自带的错误接口
+
+error是go语言声明的接口类型：
+```go
+type error interface {
+	Error() string
+}
+```
+所有符合Error()string格式的方法，都能实现错误接口，Error()方法返回错误的具体描述。
+
+#### 2.2 自定义错误
+
+返回错误前，需要定义会产生哪些可能的错误，在Go中，使用errors包进行错误的定义，格式如下：
+```go
+var err = errors.New("发生了错误")
+```
+提示：错误字符串相对固定，一般在包作用于声明，应尽量减少在使用时直接使用errors.New返回。
+
+下面这个例子演示了如何使用`errors.New`:
+```go
+func Sqrt(f float64) (float64, error) {
+	if f < 0 {
+		return 0, errors.New("math: square root of negative number")
+	}
+	// implementation
+}
+```
+
+在C语言里面是通过返回-1或者NULL之类的信息来表示错误，但是对于使用者来说，不查看相应的API说明文档，根本搞不清楚这个返回值究竟代表什么意思，比如:返回0是成功，还是失败,而Go定义了一个叫做error的类型，来显式表达错误。在使用时，通过把返回的error变量与nil的比较，来判定操作是否成功。例如`os.Open`函数在打开文件失败时将返回一个不为nil的error变量
+
+```Go
+func Open(name string) (file *File, err error)
+```
+下面这个例子通过调用`os.Open`打开一个文件，如果出现错误，那么就会调用`log.Fatal`来输出错误信息：
+```Go
+
+f, err := os.Open("filename.ext")
+if err != nil {
+	log.Fatal(err)
+}
+```
+类似于`os.Open`函数，标准包中所有可能出错的API都会返回一个error变量，以方便错误处理，这个小节将详细地介绍error类型的设计，和讨论开发Web应用中如何更好地处理error。
+
+#### 2.3 自定义错误案例
+
+案例一：简单的错误字符串提示
+```go
+package main
+
+import (
+	"errors"
+	"fmt"
+)
+
+//定义除数为0的错误
+var errByZero = errors.New("除数为0")
+
+func div(num1, num2 int) (int, error) {
+
+	if num2 == 0 {
+		return 0, errByZero
+	}
+
+	return num1 / num2, nil
+
+}
+
+func main() {
+	fmt.Println(div(1, 0))
+}
+```
+
+案例二：实现错误接口
+```go
+package main
+
+import (
+	"fmt"
+)
+
+//声明一种解析错误
+type ParseError struct {
+	Filename string
+	Line int
+}
+
+//实现error接口，返回错误描述
+func (e *ParseError) Error() string {
+	return fmt.Sprintf("%s:%d", e.Filename, e.Line)
+}
+
+//创建一些解析错误
+func newParseError(filename string, line int) error {
+	return &ParseError{filename, line}
+}
+
+func main() {
+
+	var e error
+
+	e = newParseError("main.go", 1)
+
+	fmt.Println(e.Error())
+
+	switch detail := e.(type) {
+	case *ParseError:
+		fmt.Printf("Filename: %s Line:%d \n", detail.Filename, detail.Line)
+	default: 
+		fmt.Println("other error")
+	}
+
+}
+```
+
+#### 2.4 errors包分析
+
+Go中的erros包对New的定义非常简单:
+```go
+
+//创建错误对象
+func New(text string) error {
+	return &errorString{text}
+}
+
+//错误字符串
+type errorString struct {
+	s string
+}
+
+//返回发生何种错误
+func (e *errorString) Error() string {
+	return e.s
+}
+```
+错误对象都要事先error接口的Error()方法，这样，所有的错误都可以获得字符串的描述。
+
+## 三 panic 宕机
+
+#### 2.1 手动触发宕机
+
+Go语言可以在程序中手动触发宕机，让程序崩溃，这样开发者可以及时发现错误。  
+
+Go语言程序在宕机时，会将堆栈和goroutine信息输出到控制台，所以宕机有额可以方便知晓发生错误的位置。如果在编译时加入的调试信息甚至连崩溃现场的变量值、运行状态都可以获取，那么如何触发宕机？  
+
+```go
+package main
+
+func main() {
+
+	panic("crash")
+
+}
+```
+
+运行结果是：
+```
+panic: crash
+
+goroutine 1 [running]:
+main.main()
+	/Users/username/Desktop/TestGo/src/main.go:5 +0x39
+exit status 2
+```
+
+使用`panic`函数可以制造崩溃，panic声明如下；
+```go
+func panic(v interface{})
+```
+panic()参数可以是任意类型。
+
+注意：手动触发宕机并不是一种偷懒的方式，反而能迅速报错，终止程序继续运行，防止更大的错误产生，但是如果任何错误都使用宕机处理，也不是一个良好的设计。
+
+#### 3.2 defer与panic
+
+当panic()发生宕机，panic()后面的代码将不会被执行，但是在panic前面已经运行过的defer语句依然会在宕机时发生作用：
+```go
+package main
+
+import "fmt"
+
+func main() {
+
+	defer fmt.Println("before")
+	panic("crash")
+
+}
+```
+
+## 四 recover 宕机恢复
+
+#### 4.1 让程序在崩溃时继续执行
+
+无论是代码运行错误由Runtime层抛出的panic崩溃，还是主动触发的panic崩溃，都可以配合defer和recover实现错误捕捉和处理，让代码在发生崩溃后允许继续执行。  
+
+在其他语言里，宕机往往以异常的形式存在，底层抛出异常，上层逻辑通过try/catch机制捕获异常，没有被捕获的严重异常会导致宕机，捕获的异常可以被忽略，让代码继续执行。Go没有异常系统，使用panic触发宕机类似于其他语言的抛出异常，recover的宕机恢复机制就对应try/catch机制。  
+
+#### 4.2 使用defer与recover处理错误
+
 ```go
 func test(num1 int, num2 int){
 	defer func(){
@@ -60,245 +333,75 @@ func main() {
 
 }
 ```
-#### 1.3 自定义错误
-Go 程序中，也支持自定义错误， 使用 errors.New 和 panic 内置函数。
-- errors.New("错误说明") , 会返回一个 error 类型的值，表示一个错误
-- panic 内置函数 ,接收一个 interface{}类型的值(也就是任何值了)作为参数。可以接收 error 类
-   型的变量，输出错误信息，并退出程序
+
+#### 4.3 panic recover综合示例
 ```go
-//假定一个读取配置的函数，如果文件名不正确返回一个自定义错误
-func readConfig(name string) (err error){
-	if name == "conf" {
-		//后续操作
-		return nil
-	} else {
-		return errors.New("filename not correct ")
-	}
+
+package main
+
+import (
+	"fmt"
+	"runtime"
+)
+
+//崩溃时需要传递的上下文信息
+type panicContext struct {
+	function string
+}
+
+//保护方式允许一个函数
+func ProtectRun(entry func()) {
+
+	defer func() {
+		err := recover()	//发生宕机时，获取panic传递的上下文并打印
+		switch err.(type) {
+		case runtime.Error:
+			fmt.Println("runtime error:", err)
+		default:
+			fmt.Println("error:", err)
+		}
+	}()
+	
+	entry()
+
 }
 
 func main() {
 
-	err := readConfig("config")
-	if err != nil {
-		panic(err)
-	}
-	fmt.Println("继续执行...")
+	fmt.Println("运行前")
+
+	ProtectRun(func(){
+
+		fmt.Println("手动宕机前")
+
+		panic(&panicContext{"手动触发panic",})
+
+		fmt.Println("手动宕机后")
+
+	})
+
+	ProtectRun(func(){
+
+		fmt.Println("赋值宕机前")
+
+		var a *int
+		*a = 1
+
+		fmt.Println("赋值宕机后")
+
+	})
+
+	fmt.Println("运行后")
 
 }
 ```
 
-
-补充：
-## 一 错误处理
-Go语言主要的设计准则是：简洁、明白，简洁是指语法和C类似，相当的简单，明白是指任何语句都是很明显的，不含有任何隐含的东西，在错误处理方案的设计中也贯彻了这一思想。我们知道在C语言里面是通过返回-1或者NULL之类的信息来表示错误，但是对于使用者来说，不查看相应的API说明文档，根本搞不清楚这个返回值究竟代表什么意思，比如:返回0是成功，还是失败,而Go定义了一个叫做error的类型，来显式表达错误。在使用时，通过把返回的error变量与nil的比较，来判定操作是否成功。例如`os.Open`函数在打开文件失败时将返回一个不为nil的error变量
-```Go
-
-func Open(name string) (file *File, err error)
+运行结果：
 ```
-下面这个例子通过调用`os.Open`打开一个文件，如果出现错误，那么就会调用`log.Fatal`来输出错误信息：
-```Go
-
-f, err := os.Open("filename.ext")
-if err != nil {
-	log.Fatal(err)
-}
+运行前
+手动宕机前
+error: &{手动触发panic}
+赋值宕机前
+runtime error: runtime error: invalid memory address or nil pointer dereference
+运行后
 ```
-类似于`os.Open`函数，标准包中所有可能出错的API都会返回一个error变量，以方便错误处理，这个小节将详细地介绍error类型的设计，和讨论开发Web应用中如何更好地处理error。
-## Error类型
-error类型是一个接口类型，这是它的定义：
-```Go
-
-type error interface {
-	Error() string
-}
-```
-error是一个内置的接口类型，我们可以在/builtin/包下面找到相应的定义。而我们在很多内部包里面用到的 error是errors包下面的实现的私有结构errorString
-```Go
-
-// errorString is a trivial implementation of error.
-type errorString struct {
-	s string
-}
-
-func (e *errorString) Error() string {
-	return e.s
-}
-```
-你可以通过`errors.New`把一个字符串转化为errorString，以得到一个满足接口error的对象，其内部实现如下：
-```Go
-
-// New returns an error that formats as the given text.
-func New(text string) error {
-	return &errorString{text}
-}
-```
-下面这个例子演示了如何使用`errors.New`:
-```Go
-
-func Sqrt(f float64) (float64, error) {
-	if f < 0 {
-		return 0, errors.New("math: square root of negative number")
-	}
-	// implementation
-}
-```
-在下面的例子中，我们在调用Sqrt的时候传递的一个负数，然后就得到了non-nil的error对象，将此对象与nil比较，结果为true，所以fmt.Println(fmt包在处理error时会调用Error方法)被调用，以输出错误，请看下面调用的示例代码：
-```Go
-
-f, err := Sqrt(-1)
-    if err != nil {
-        fmt.Println(err)
-    }	
-```
-## 自定义Error
-通过上面的介绍我们知道error是一个interface，所以在实现自己的包的时候，通过定义实现此接口的结构，我们就可以实现自己的错误定义，请看来自Json包的示例：
-```Go
-
-type SyntaxError struct {
-	msg    string // 错误描述
-	Offset int64  // 错误发生的位置
-}
-
-func (e *SyntaxError) Error() string { return e.msg }
-```
-Offset字段在调用Error的时候不会被打印，但是我们可以通过类型断言获取错误类型，然后可以打印相应的错误信息，请看下面的例子:
-```Go
-
-if err := dec.Decode(&val); err != nil {
-	if serr, ok := err.(*json.SyntaxError); ok {
-		line, col := findLine(f, serr.Offset)
-		return fmt.Errorf("%s:%d:%d: %v", f.Name(), line, col, err)
-	}
-	return err
-}
-```
-需要注意的是，函数返回自定义错误时，返回值推荐设置为error类型，而非自定义错误类型，特别需要注意的是不应预声明自定义错误类型的变量。例如：
-```Go
-
-func Decode() *SyntaxError { // 错误，将可能导致上层调用者err!=nil的判断永远为true。
-        var err *SyntaxError     // 预声明错误变量
-        if 出错条件 {
-            err = &SyntaxError{}
-        }
-        return err               // 错误，err永远等于非nil，导致上层调用者err!=nil的判断始终为true
-    }
-```	
-原因见 http://golang.org/doc/faq#nil_error
-
-上面例子简单的演示了如何自定义Error类型。但是如果我们还需要更复杂的错误处理呢？此时，我们来参考一下net包采用的方法：
-```Go
-
-package net
-
-type Error interface {
-    error
-    Timeout() bool   // Is the error a timeout?
-    Temporary() bool // Is the error temporary?
-}
-
-```
-在调用的地方，通过类型断言err是不是net.Error,来细化错误的处理，例如下面的例子，如果一个网络发生临时性错误，那么将会sleep 1秒之后重试：
-```Go
-
-if nerr, ok := err.(net.Error); ok && nerr.Temporary() {
-	time.Sleep(1e9)
-	continue
-}
-if err != nil {
-	log.Fatal(err)
-}
-```
-## 错误处理
-Go在错误处理上采用了与C类似的检查返回值的方式，而不是其他多数主流语言采用的异常方式，这造成了代码编写上的一个很大的缺点:错误处理代码的冗余，对于这种情况是我们通过复用检测函数来减少类似的代码。
-
-请看下面这个例子代码：
-```Go
-
-func init() {
-	http.HandleFunc("/view", viewRecord)
-}
-
-func viewRecord(w http.ResponseWriter, r *http.Request) {
-	c := appengine.NewContext(r)
-	key := datastore.NewKey(c, "Record", r.FormValue("id"), 0, nil)
-	record := new(Record)
-	if err := datastore.Get(c, key, record); err != nil {
-		http.Error(w, err.Error(), 500)
-		return
-	}
-	if err := viewTemplate.Execute(w, record); err != nil {
-		http.Error(w, err.Error(), 500)
-	}
-}
-```
-上面的例子中获取数据和模板展示调用时都有检测错误，当有错误发生时，调用了统一的处理函数`http.Error`，返回给客户端500错误码，并显示相应的错误数据。但是当越来越多的HandleFunc加入之后，这样的错误处理逻辑代码就会越来越多，其实我们可以通过自定义路由器来缩减代码(实现的思路可以参考第三章的HTTP详解)。
-```Go
-
-type appHandler func(http.ResponseWriter, *http.Request) error
-
-func (fn appHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	if err := fn(w, r); err != nil {
-		http.Error(w, err.Error(), 500)
-	}
-}
-```
-上面我们定义了自定义的路由器，然后我们可以通过如下方式来注册函数：
-```Go
-
-func init() {
-	http.Handle("/view", appHandler(viewRecord))
-}
-```
-当请求/view的时候我们的逻辑处理可以变成如下代码，和第一种实现方式相比较已经简单了很多。
-```Go
-
-func viewRecord(w http.ResponseWriter, r *http.Request) error {
-	c := appengine.NewContext(r)
-	key := datastore.NewKey(c, "Record", r.FormValue("id"), 0, nil)
-	record := new(Record)
-	if err := datastore.Get(c, key, record); err != nil {
-		return err
-	}
-	return viewTemplate.Execute(w, record)
-}
-```
-上面的例子错误处理的时候所有的错误返回给用户的都是500错误码，然后打印出来相应的错误代码，其实我们可以把这个错误信息定义的更加友好，调试的时候也方便定位问题，我们可以自定义返回的错误类型：
-```Go
-
-type appError struct {
-	Error   error
-	Message string
-	Code    int
-}
-```
-这样我们的自定义路由器可以改成如下方式：
-```Go
-
-type appHandler func(http.ResponseWriter, *http.Request) *appError
-
-func (fn appHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	if e := fn(w, r); e != nil { // e is *appError, not os.Error.
-		c := appengine.NewContext(r)
-		c.Errorf("%v", e.Error)
-		http.Error(w, e.Message, e.Code)
-	}
-}
-```
-这样修改完自定义错误之后，我们的逻辑处理可以改成如下方式：
-```Go
-
-func viewRecord(w http.ResponseWriter, r *http.Request) *appError {
-	c := appengine.NewContext(r)
-	key := datastore.NewKey(c, "Record", r.FormValue("id"), 0, nil)
-	record := new(Record)
-	if err := datastore.Get(c, key, record); err != nil {
-		return &appError{err, "Record not found", 404}
-	}
-	if err := viewTemplate.Execute(w, record); err != nil {
-		return &appError{err, "Can't display record", 500}
-	}
-	return nil
-}
-```
-如上所示，在我们访问view的时候可以根据不同的情况获取不同的错误码和错误信息，虽然这个和第一个版本的代码量差不多，但是这个显示的错误更加明显，提示的错误信息更加友好，扩展性也比第一个更好。
-
