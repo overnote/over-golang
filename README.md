@@ -1,7 +1,7 @@
 ## 前言
 
 推荐书籍地址：
-https://github.com/ruyuejun/north-star/  
+https://github.com/ruyuejun/polaris  
 
   
 所有知识笔记汇总仓库：  
