@@ -405,3 +405,9 @@ error: &{手动触发panic}
 runtime error: runtime error: invalid memory address or nil pointer dereference
 运行后
 ```
+
+#### 4.4 panic和recover关系
+
+panic和defer的组合：
+- 有panic没有recover，程序宕机
+- 有panic也有recover，程序不会宕机，执行完对应的defer后，从宕机点退出当前函数后继续执行
