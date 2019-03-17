@@ -40,6 +40,8 @@ func main() {
 }	
 ```
 
+## 二 连接池
+
 ```Go
 package main
 
