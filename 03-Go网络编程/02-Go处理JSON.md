@@ -7,9 +7,12 @@ JSON（JavaScript Object Notation）是一种轻量级的数据交换格式，�
     "address": ["北京","上海"]
 }
 ```
+
 JSON易于机器解析和生成，程序在网络传输时会先将数据（结构体、map）等序列化成json字符串，接收方拿到json字符串时，再反序列化承恢复成原来的数据结构。
 ## 二 JSON序列化与反序列化
+
 #### 2.1 JSON序列化
+
 ```go
 package main
 import (
@@ -34,8 +37,8 @@ func main() {
 }
 ```
 同理，我们也可以使用上述方法对基本数据类型、切片、map等数据进行序列化。 
-对于结构体的序列化，如果我们希望序列化后的 key 的名字，又我们自己重新制定，那么可以给 struct
-指定一个 tag 标签：
+
+对于结构体的序列化，如果我们希望序列化后的 key 的名字，又我们自己重新制定，那么可以给 struct指定一个 tag 标签：
 ```go
 type Person struct {
 	Name string `json:"my_name"`
@@ -43,7 +46,9 @@ type Person struct {
 }
 //输出：{"my_name":"lisi","my_age":50}
 ```
+
 #### 2.2 JSON反序列化
+
 ```go
 package main
 import (
@@ -66,7 +71,9 @@ func main() {
 	fmt.Println(p)			//{lisi 50}
 }
 ```
+
 # 7.2 JSON处理
+
 JSON（Javascript Object Notation）是一种轻量级的数据交换语言，以文字为基础，具有自我描述性且易于让人阅读。尽管JSON是Javascript的一个子集，但JSON是独立于语言的文本格式，并且采用了类似于C语言家族的一些习惯。JSON与XML最大的不同在于XML是一个完整的标记语言，而JSON不是。JSON由于比XML更小、更快，更易解析,以及浏览器的内建快速解析支持,使得其更适用于网络数据传输领域。目前我们看到很多的开放平台，基本上都是采用了JSON作为他们的数据交互的接口。既然JSON在Web开发中如此重要，那么Go语言对JSON支持的怎么样呢？Go语言的标准库已经非常好的支持了JSON，可以很容易的对JSON数据进行编、解码的工作。
 
 前一小节的运维的例子用json来表示，结果描述如下：
