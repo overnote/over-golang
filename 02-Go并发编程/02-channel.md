@@ -1,11 +1,18 @@
 ## 一 channel
+
+#### 1.0  channel的引出
+
+单纯的将函数并发执行是没有意义的，函数与函数之间必须能够交换数据才能体现并发执行函数的意义。虽然可以使用共享内存进行数据交换，但是共享内存在不同的goroutine中容易发生竞态问题，为了保证数据的正确性，必须使用互斥量对内存进行加锁，这种做法又肯定造成了性能问题。  
+
+Go提倡使用通信的方式代替共享内存，即使用通道channel。
+
 #### 1.1 channel的使用
-在上述计算阶乘的案例中，使用全局变量加锁同步来解决 goroutine 的通讯，但不完美，主线程在等待所有 goroutine 全部完成的时间很难确定，我们这里设置 10 秒，仅仅是估算。如果主线程休眠时间长了，会加长等待时间，如果等待时间短了，可能还有 goroutine 处于工作
-状态，这时也会随主线程的退出而销毁。通过全局变量加锁同步来实现通讯，也并不利用多个协程对全局变量的读写操作。  
-为了解决上述问题，Go推出了channel：
+
+channel特性：
 - channel的本质是一个数据结构-队列，先进先出
-- channel是线程安全的，多goroutine访问时，不需要加锁
+- channel是线程安全的，多goroutine访问时，不需要加锁，因为在任何时候，同时只能有一个goroutine访问通道。
 - channel拥有类型，一个string的channle只能存放string类型数据
+
 如图所示：
 ![](/images/Golang/并发-02.png)
 
@@ -27,18 +34,19 @@ cf := make(chan interface{})
 
 channel的操作：channel通过操作符`<-`来接收和发送数据
 ```go
-	ch := make(chan int, 10)//指定长度为10，不指定空间长队，则不能存储数据
-	ch <- 100				//向c中存储一个数据100
-	fmt.Printf("入队后数据：%v\n",ch)	//0xc000074000
+	ch := make(chan int, 10)				//指定长度为10，不指定空间长队，则不能存储数据
+	ch <- 100								//向c中存储一个数据100
+	fmt.Printf("入队后数据：%v\n",ch)			å//0xc000074000
 	ch <- 200
 	ch <- 300
 
-	<- ch				//直接出队一个数据，且不使用	
+	<- ch									//直接出队一个数据，且不使用	
 
 	data1 := <-ch
 	data2 := <-ch
 	fmt.Printf("取出的数据data1：%v\n", data1)	//200
 	fmt.Printf("取出的数据data2：%v\n", data2)	//300
+
 ```
 
 #### 1.2 channel的遍历和关闭
@@ -153,3 +161,47 @@ func doprint() {
 
 容量是channel的最大长度：cap(ch)  
 长度是channel当前包含元素数：len(ch)
+
+####  1.7 通道阻塞
+
+发送数据阻塞：  
+
+把数据往通道中发送时，如果接收方一直都没有接收，那么发送操作将被持续阻塞，Go程序运行时能智能的发现一些永远无法成功发送的语句并提示错误
+```go
+	ch := make(chan int)			//添加一个int类型的第二个参数不会报错
+	ch <- 0							//报错：`all goroutines are asleep`。
+```
+
+接收数据阻塞：
+```go
+
+	ch := make(chan int, 3)
+	ch<- 1
+	ch<- 2
+	ch<- 3	
+
+	data1 := <-ch			//阻塞接收数据
+	fmt.Println(data1)
+
+	data2,ok := <-ch		//非阻塞接收数据
+	fmt.Println(data2)
+	fmt.Println(ok)			//true
+```
+
+非阻塞通道接收会造成很高的cpu占用，因此使用较少，如果需要实现接收超时检测，推荐select。  
+
+#### 1.8 通道关闭
+
+给被关闭的通道发送数据会造成panic：
+```go
+
+	ch := make(chan int, 3)
+	ch<- 1	
+
+	close(ch)
+
+	ch<- 4
+```
+
+不过已经关闭的通道在接收数据时不会发生阻塞。
+
