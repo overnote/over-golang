@@ -2,7 +2,7 @@
 
 #### 1.0 select示例
 
-在有多个channel时，肯定不能让其串行执行：
+select用于监听channel上的数据流动，在有多个channel时，肯定不能让其串行执行：
 
 ```go
 package main
@@ -87,6 +87,8 @@ select支持default，如果所有的case分支内都没有可读数据，那么
 
 当然，在一些场景中（for循环使用select获取channel数据），如果channel被写满，也可能会执行default。
 
+注意：select中的case必须是IO操作。
+
 #### 1.1 select的作用
 
 关键字select可以监听channel上的数据流动，用法与switch类似，由select开始下一个新的需选择块，每个选择条件由case语句来描述，但是在使用方面有一条限制，最大的限制是：
@@ -107,7 +109,8 @@ select {
 
 如果没有一条语句可以执行，即所有的通道都被阻塞，那么有两种可能的情况：
 - 如果给出了default语句，执行default语句，同时程序性的执行会从select语句后的语句中恢复
-- 如果没有default语句，那么select语句将被阻塞，直到至少有一个通信可以进行下去。
+- 如果没有default语句，那么select语句将被阻塞，直到至少有一个通信可以进行下去
+- 所以一般不写default语句，
 ```Go
 func fibonacci(ch chan<- int, quit<-chan bool) {
 	x, y := 1, 1
@@ -140,10 +143,6 @@ func main(){
 	fibonacci(ch, quit)
 
 }
-```
-select 案例：
-```go
-
 ```
 
 #### 1.2 channel超时解决
