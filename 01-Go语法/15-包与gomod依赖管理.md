@@ -1,4 +1,52 @@
-## 一 go mod 初步使用
+## 一 包
+
+#### 1.1 package与import
+
+在实际的开发中，我们往往需要在不同的文件中，去调用其它文件的定义的函数，比如 main.go 中，需要使用"fmt"包中的Println()函数：
+```go
+package main
+import "fmt"
+```
+
+在Go中，Go的每一个文件都是属于一个包的，也就是说Go是以包的形式来管理文件和项目目录结构。所以如果要导入某些第三方包，直接输入包所在地址即可。文件的包名通常和文件所在的文件夹名一致，一般为小写字母。
+
+```
+引入方式 1:import "包名"
+引入方式 2:
+import (
+	"包名"
+	"包名" 
+)
+```
+- package 指令在 文件第一行，然后是 import 指令
+- 在 import 包时，路径从 $GOPATH 的 src 下开始，不用带 src , 编译器会自动从 src 下开始引入
+- 为了让其它包的文件，可以访问到本包的函数，则该函数名的首字母需要大写，类似其它语言 的 public ,这样才能跨包访问
+- 在访问其它包函数，变量时，其语法是 `包名.函数名`
+
+#### 1.2 GoPath
+
+GoPath目录用来存放代码文件、可运行文件、编译后的包文件。  
+
+从1.1版本到1.7必须设置这个变量，而且不能和Go的安装目录一样，1.8版本后会有默认值：
+```
+Unix:$HOME/go
+Windows:%USERPROFILE%/go。
+```
+
+GOPATH允许多个目录，多个目录的时候Windows是分号，Linux系统是冒号隔开。当有多个GOPATH时，默认会将go get的内容放在第一个目录下，$GOPATH 目录约定有三个子目录：
+- src:存放源代码，一般一个项目分配一个子目录;
+- pkg:编译后生成的文件，如.a文件
+- bin:编译后生成的可执行文件,可以加入$PATH中
+>注意：一般建议package的名称和目录名保持一致
+
+#### 1.3 包中的函数调用方式
+函数调用的方式：
+- 同包下：直接调用即可
+- 不同包下：包名.函数名
+
+## 二 go mod
+
+#### 2.1 go mod 的使用
 
 go的项目依赖管理一直饱受诟病，在go1.11后正式引入了`go mod`功能，类似nodejs的npm。在go1.13版本中将会默认启用。  
 
@@ -39,10 +87,10 @@ require (
 
 使用`go mod`后，run产生的依赖源码不会安装在当前项目中，而是安装在：`$GOPATH/pkg/mod`
 
-## 二 详细使用
+## 2.2 详细使用
 详细使用地址：https://zhuanlan.zhihu.com/p/59687626
 
-## 三 翻墙下载问题
+## 三 翻墙问题解决
 
 #### 3.1 推荐方式 GOPROXY
 
@@ -85,3 +133,18 @@ cd $GOPATH/src/golang.org/x
 git clone git@github.com:golang/text.git
 rm -rf text/.git
 当如果需要指定版本的时候，该方法就无解了，因为 GitHub 上的镜像仓库多数都没有 tag。并且，手动嘛，程序员怎么能干呢，尤其是依赖的依赖，太多了。
+
+## 四 go mod引起的变化
+
+引包方式变化：
+- 不使用go mod 引包："./test"  引入test文件夹
+- 使用go mod 引包："projectmodlue/test" 使用go.mod中的modlue名/包名
+
+因为在go1.11后如果开启了`go mod`，需要在src目录下存在go.mod文件，并书写主module名（一般为项目名），否则无法build。
+
+开启`go mod`编译运行变化：
+- 使用vscode开发，必须在src目录下使用 `go build`命令执行，不要使用code runner插件
+- 使用IDEA开发，项目本身配置go.mod文件扔不能支持，开发工具本身也要开启`go mod`支持（位于配置的go设置中）
+
+
+
