@@ -2,40 +2,33 @@
 
 #### 1.1 defer延迟执行修饰符
 
-在函数中，程序员经常需要创建资源(比如:数据库连接、文件句柄、锁等) ，为了在函数执行完 毕后，及时的释放资源，Go 的设计者提供 defer (延时机制)。
+在函数中，程序员经常需要创建资源(比如:数据库连接、文件句柄、锁等) ，为了在函数执行完 毕后，及时的释放资源，Go设计者提供了`defer`(延时机制):
 ```go
 func main() {
-
-	//当执行到defer语句时，暂不执行，会将defer后的语句压入到独立的栈中
-	//当函数执行完毕后，再从该栈按照先入后出的方式出栈执行
+	//当执行到defer语句时，暂不执行，会将defer后的语句压入到独立的栈中,当函数执行完毕后，再从该栈按照先入后出的方式出栈执行
 	defer fmt.Println("defer1...")
 	defer fmt.Println("defer2...")
-
 	fmt.Println("main...")
-
 }
 ```
+
 上述代码执行结果：
 ```
 main...
 defer2...
 defer1...
 ```
-从上述代码看出：Go语言的defer语句会将其后跟随的语句进行延迟处理，在defer归属的函数即将返回时，将延迟处理的语句按defer的逆顺序进行执行，即，先被defer的语句最后被执行。
 
-注意：在 defer 将语句放入到栈时，也会将相关的值拷贝同时入栈
+`defer`将语句放入到栈时，也会将相关的值拷贝同时入栈:
 ```go
 func main() {
-
 	num := 0
-
 	defer fmt.Println("defer中：num=", num)
-
 	num = 3
 	fmt.Println("main中：num=",num)
-
 }
 ```
+
 输出结果：
 ```
 main中：num= 3
@@ -44,60 +37,33 @@ defer中：num= 0
 
 #### 1.2 defer最佳实践
 
-defer最佳实践：用于关闭资源，比如：`defer connect.close()`。下面列举一个常见的并发使用map的函数：
-```go
-var (
-	mutex sync.Mutex
-	testMap = make(map[string]int)
-)
-func getMapValue(key string) int {
+defer最佳实践：用于关闭资源，比如：`defer connect.close()`。  
 
-	mutex.Lock()						//对共享资源加锁
-	value := testMap[key]
-	mutex.Unlock()
+案例一：defer处理资源  
 
-	return value
-}
-```
-上述案例是很常见的对并发map执行加锁执行的安全操作，使用defer可以对上述语义进行简化：
-```go
-var (
-	mutex sync.Mutex
-	testMap = make(map[string]int)
-)
-func getMapValue(key string) int {
-
-	mutex.Lock()						//对共享资源加锁
-	defer mutex.Unlock()
-	return testMap[key]
-}
-```
-
-defer处理资源案例：
+没有使用defer时打开文件处理代码：
 ```go
 
 f,err := os.Open(file)
-
 if err != nil {
 	return 0
 }
 
 info,err := f.Stat()
-
 if err != nil {
 	f.Close()
 	return 0
 }
 
-//后续一系列文件操作后执行关闭
 f.Close()
 return 0;
 
 ```
+
 使用defer优化：
 ```go
-f,err := os.Open(file)
 
+f,err := os.Open(file)
 if err != nil {
 	return 0
 }
@@ -115,6 +81,57 @@ if err != nil {
 // f.Close()			//这句已经不需要了
 return 0;
 ```
+
+
+案例二：并发使用map的函数。  
+
+无defer代码：
+```go
+var (
+	mutex sync.Mutex
+	testMap = make(map[string]int)
+)
+func getMapValue(key string) int {
+	mutex.Lock()						//对共享资源加锁
+	value := testMap[key]
+	mutex.Unlock()
+	return value
+}
+```
+
+上述案例是很常见的对并发map执行加锁执行的安全操作，使用defer可以对上述语义进行简化：
+```go
+var (
+	mutex sync.Mutex
+	testMap = make(map[string]int)
+)
+func getMapValue(key string) int {
+	mutex.Lock()						//对共享资源加锁
+	defer mutex.Unlock()
+	return testMap[key]
+}
+```
+
+#### 1.3 defer无法处理全局资源
+
+使用defer语句, 可以方便地组合函数/闭包和资源对象，即使panic时，defer也能保证资源的正确释放。但是上述案例都是在局部使用和释放资源，如果资源的生命周期很长， 而且可能被多个模块共享和随意传递的话，defer语句就不好处理了，需要下面的方式。  
+
+Go的`runtime`包的`func SetFinalize(x, f interface{})函数可以提供类似C++析构函数的机制，比如我们可以包装一个文件对象，在没有人使用的时候能够自动关闭：
+```go
+type MyFile struct {
+	f *os.File
+}
+
+func NewFile(name string) (&MyFile, error){
+	f, err := os.Open(name)
+	if err != nil {
+		return nil, err
+	}
+	runtime.SetFinalizer(f, f.f.Close)
+	return &MyFile{f: f}, nil
+}
+```
+在使用`runtime.SetFinalizer`时, 需要注意的地方是尽量要用指针访问内部资源，这样的话, 即使`*MyFile`对象忘记释放, 或者是被别的对象无意中覆盖, 也可以保证内部的文件资源可以正确释放。
 
 ## 二 错误Error
 
