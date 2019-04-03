@@ -51,7 +51,6 @@ import (
 	"os/signal"
 	"syscall"
 	"time"
-
 	"github.com/garyburd/redigo/redis"
 )
 
@@ -116,7 +115,8 @@ func main() {
 	test, err := Get("test")
 	fmt.Println(test, err)
 }
-](func ExampleNewClient() {
+
+func ExampleNewClient() {
 	client := redis.NewClient(&redis.Options{
 		Addr:     "localhost:6379",
 		Password: "", // no password set
