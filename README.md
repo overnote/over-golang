@@ -29,7 +29,6 @@ https://github.com/overcomputer
         《Go RPC 开发指南》：https://github.com/smallnest/go-rpc-programming-guide
         《Go语言高级编程》：https://github.com/chai2010/advanced-go-programming-book
         《深入解析Go》：https://github.com/tiancaiamao/go-internals
-        《Mastering GO》：https://github.com/hantmac/Mastering_Go_ZH_CN
         《Go42》：https://github.com/ffhelicopter/Go42
         《研磨设计模式-Go实现》：https://github.com/senghoo/golang-design-pattern
         《Go语言圣经》：https://github.com/gopl-zh/gopl-zh.github.com
