@@ -95,15 +95,18 @@ Go使用消息机制而非共享内存作为通信方式。消息机制认为每
 
 #### 2.2 goroutine调度模型
 
+goroutine的概念类似于线程，但 goroutine 由 Go 程序运行时的调度和管理。 Go 程序 会智能地将 goroutine 中 的任务合理地分配给每个 CPU。  
+
 MPG模式运行状态1：
 ![](/images/Golang/并发-01.png)
 - M:操作系统的主线程（是物理线程），P:协程执行时需要的上下文，G：协程
 - 上图中，当前程序有三个物理线程，如果三个物理线程都在同一个CPU运行，就是并发，否则是并行。
-- Go的协程是轻量的逻辑态的，Java的多线程是重量的内核态的，几千个线程可能会耗光CPOU
+- Go的协程是轻量的逻辑态的，Java的多线程是重量的内核态的，几千个线程可能会耗光CPU
 
-#### 2.3 设置Golang运行cpu数
+这套调度器的工作原理类似于操作系统调度线程， Go程序调度器可以高效地将 CPU资源分配给每一个任务。 传统逻辑中 ， 开发者需要维护线程池中线程与 CPU 核心数量的对应关系。同样 的， Go 地中 也可以通过 runtime.GOMAXPROCS()函数做到。  
 
-在Go1.8之后，程序默认运行在多核上，无需设置，1.8之前需要如下设置：
+
+在Go1.5之后，程序默认运行在多核上，无需设置，1.5之前需要如下设置：
 ```go
 package main
 
@@ -143,7 +146,7 @@ runtime.GOMAXPROCS(4)的数值：
 - 大于1，多核并发执行
 - Go1.5之前默认使用单核，1.5之后默认执行：`runtime.GOMAXPROCS(runtime.NumCPU())`
 
-#### 2.4 常用包
+#### 2.3 常用包
 
 runtime.Gosched():用于让出CPU时间片，让出当前协程的执行权限，调度器安排其他等待的任务运行。（可以理解为接力赛跑：A跑了一段遇到了Gosched接力给B）。  
 ```Go
@@ -169,6 +172,54 @@ runtime.Goexit():用于立即终止当前协程运行，调度器会确保所有
 
 runtime.GOMAXPROCS():用来设置可以并行计算的CPU核心数最大值，并返回之前的值，Go使用该函数实现了并行执行。
 
-## 三 Go中获取协程结果的办法
+#### 2.4 Go语言的协作程序 Cgo「outine)和普通的协作程序 Ccoroutine)
+
+C#、 Lua、 Python语言都支持 coroutine特性。 coroutine与 goroutine在名字上类似， . 都可以将函数或者语旬在独立的环境中运行，但是它们之间有两点不同:
+- goroutine可能发生并行执行;但coroutine始终顺序执行。
+
+狭义地说， goroutine可能发生在多线程环境下， goroutine无法控制自己获取高优先度 支持; coroutine 始终发生在单线程， coroutine 程序需要主动交出控制权，宿主才能获得控 制权并将控制权交给其他 coroutine。
+
+- goroutine I、可使用 channel 通信; coroutine 使 用 yield 和 resume 操作。
+
+goroutine 和 coroutine 的概念和运行机制都是脱胎于早期的操作系统 。  
+
+coroutine 的运行机制属于协作式任务处理，早期的操作系统要求每一个应用必须遵守操作系统的任务处理规则，应用程序在不需要使用 CPU 时，会主动交出 CPU 使用权。如 果开发者无意间或者故意让应用程序长时间占用 CPU，操作系统也无能为力，表现出来的 效果就是计算机很容易失去响应或者死机。   
+
+goroutine 属于抢占式任务处理，己经和现有的多线程和多进程任务处理非常类似。应 用程序对 CPU 的控制最终还需要由操作系统来管理，操作系统如果发现一个应用程序长 时间大量地占用 CPU，那么用户有权终止这个任务 。
+
+## 三 goroutine使用案例
+
+#### 3.1 同时执行两件事
+
+```go
+package main
+
+import (
+	"fmt"
+	"time"
+)
+
+func running() {
+	var times int
+	for {
+		times++
+		fmt.Println("tick:", times)
+		time.Sleep(time.Second)
+	}
+}
+
+func main() {
+
+	go running()
+
+	var input string
+	fmt.Scanln(&input)
+
+}
+```
+命令行会不断地输出 tick，同时可以使用 fmt.Scanln()接受用户输入。两个环节可以同时进行，直到按 Enter键时将输入的内容写入 input变量中井返回，
+整个程序终止。
+
+## 四 Go中获取协程结果的办法
 
 Go中可以使用全局互斥锁（不推荐）与channel的方式进行协程通信。
