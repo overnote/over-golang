@@ -4,7 +4,7 @@ gin框架中的路由是基于httprouter开发的。
 
 httprouter地址：https://github.com/julienschmidt/httprouter
 
-gin提供了Martini风格API，但是速度比Martini块40倍。gin非常轻量，使用简介。  
+gin提供了Martini风格API，但是速度比Martini快40倍。gin非常轻量，使用方便简洁。  
 
 HelloWorld：
 ```go
@@ -207,7 +207,7 @@ test...
 
 ## 八 中间件
 
-gin框架允许在处理请求时，加入用户自己的钩子函数，该狗子函数即中间件。  
+gin框架允许在处理请求时，加入用户自己的钩子函数，该钩子函数即中间件。  
 
 ```go
 package main
