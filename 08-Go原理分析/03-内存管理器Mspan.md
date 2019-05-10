@@ -11,7 +11,7 @@ Go内存分配的主要组件：
 - Mcache: 每个尺寸的class都有一个空闲链表，每个线程都有自己局部Mcache（小对象从这里取，无锁，无竞争，十分高效）
 - MCentral：Mcache可以在这里获取更多内存，当自身无空闲内存时，可以向MHeap申请一个span（只能一个），申请的span包含多少个page由cebtral的sizeclass决定
 - MHeap：负责将MSpan组织管理起来。从free数组中分配，如果发生切割则将生于的部分放回free数组中。回收过程也类似，回收一个Mspan时，先查它的相邻地址，再通过map映射得到对应的Mspan，如果Mspan状态未使用，则两者合并，最后将这个page或者合并后的page归还到free数组分配池或large中。
-![](/images/Golang/内存-04.png)
+![](../images/Golang/内存-04.png)
 如图所示不一样的地方：用户进程newobject式从arena区域分配的，而runtime层自身管理结构式专门设计了fixAlloc分配的，和TCMalloc很不一样。
 在Go中，内存分配有三个概念：
 ```

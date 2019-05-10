@@ -3,4 +3,4 @@
 #### 1.1 jwt介绍
 
 jwt执行流程图：
-![](/images/Golang/jwt.jpg)
+![](../images/Golang/jwt.jpg)

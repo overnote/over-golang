@@ -17,7 +17,7 @@ NSQL的组件：
 - nsqadmin：是一个web管理平台，实时监控集群状以及执行各种管理任务
 
 架构如图：
-![](/images/Golang/nsq.png)
+![](../images/Golang/nsq.png)
 
 这样架构的好处：nsqd之间互不影响，可以无缝的增加nsqd节点，同时nsqlookupd也可以部署两台，以防止单点故障。  
 
