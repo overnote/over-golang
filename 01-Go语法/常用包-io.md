@@ -1,5 +1,7 @@
 ## 一 文件操作
+
 #### 1.1 目录操作
+
 文件操作的大多数函数都是在os包里面，下面列举了几个目录操作的：
 
 - func Mkdir(name string, perm FileMode) error
@@ -188,9 +190,3 @@ if err != nil {
 }
 fmt.Prinf("%v",string(content))
 ```
-#### 1.6 删除文件
-Go语言里面删除文件和删除文件夹是同一个函数
-
-- func Remove(name string) Error
-
-	调用该函数就可以删除文件名为name的文件
