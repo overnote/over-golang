@@ -44,7 +44,7 @@
 - [@astaxie](https://github.com/astaxie)：开源书籍《GoWeb编程》作者
 
 
-## 附录
+## 附录：博主自己的其他笔记
 
 推荐书籍地址：https://github.com/ruyuejun/polaris   
 知识笔记汇总仓库：https://github.com/overnote  
