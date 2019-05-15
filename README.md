@@ -22,19 +22,33 @@
 ## Golang资料收集
 
 开源书籍资料（有英文版的，推荐英文版）：
-- 《Go语言标准库》：https://github.com/polaris1119/The-Golang-Standard-Library-by-Example
-- 《Go RPC 开发指南》：https://github.com/smallnest/go-rpc-programming-guide
-- 《Go语言高级编程》：https://github.com/chai2010/advanced-go-programming-book
-- 《深入解析Go》：https://github.com/tiancaiamao/go-internals
-- 《Go42》：https://github.com/ffhelicopter/Go42
-- 《研磨设计模式-Go实现》：https://github.com/senghoo/golang-design-pattern
-- 《Go语言圣经》：https://github.com/gopl-zh/gopl-zh.github.com
-- 《Mastering GO》：https://github.com/hantmac/Mastering_Go_ZH_CN
+- [《Go语言标准库》](https://github.com/polaris1119/The-Golang-Standard-Library-by-Example)
+- [《Go RPC 开发指南》](https://github.com/smallnest/go-rpc-programming-guide)
+- [《Go语言高级编程》](https://github.com/chai2010/advanced-go-programming-book)
+- [《深入解析Go》](https://github.com/tiancaiamao/go-internals)
+- [《Go42》](https://github.com/ffhelicopter/Go42)
+- [《研磨设计模式-Go实现》](https://github.com/senghoo/golang-design-pattern)
+- [《Go语言圣经》](https://github.com/gopl-zh/gopl-zh.github.com)
+- [《Mastering GO》](https://github.com/hantmac/Mastering_Go_ZH_CN)
 
 视频资料：
-- 韩顺平go基础：https://www.bilibili.com/video/av35928275  
-- Go微服务实战(收费)：https://study.163.com/course/introduction.htm?courseId=1209302815  
+- [韩顺平go基础](https://www.bilibili.com/video/av35928275) 
+- [Go微服务实战(收费)](https://study.163.com/course/introduction.htm?courseId=1209302815)
 
+## 附录：博主自己的其他笔记
+
+[推荐书籍](https://github.com/ruyuejun/polaris)：综合了所有技术对应的书籍与书评
+
+[知识笔记汇总仓库](https://github.com/overnote)：所有技术笔记所在组织  
+
+各类技术分类索引：
+- [算法](https://github.com/overnote/Algorithm)：涉及数据结构、基础算法、算法进阶等内容，有Go、JS两个版本，未来增加C，Java
+- [服务端](https://github.com/overnote/Server)：涉及服务端常用技术，如：nginx、mysql、redis等
+- [JavaScript](https://github.com/overnote/JavaScript)：涉及网页开发、JS学习、Node、vue、react等
+- [Go](https://github.com/overnote/Golang)：
+- [Java]()：整理中
+- [Python]()：整理中
+- [C与C++]()：未学习
 
 ## 感谢
 
@@ -42,18 +56,3 @@
 
 - [@davyxu](https://github.com/davyxu)：《Go语言从入门到进阶实战》作者
 - [@astaxie](https://github.com/astaxie)：开源书籍《GoWeb编程》作者
-
-
-## 附录：博主自己的其他笔记
-
-推荐书籍地址：https://github.com/ruyuejun/polaris   
-知识笔记汇总仓库：https://github.com/overnote  
-
-各类技术分类索引：
-- 算法：https://github.com/overnote/Algorithm
-- 服务端技术:https://github.com/overnote/Server  
-- JavaScript：https://github.com/overnote/JavaScript
-- Go：https://github.com/overnote/Golang
-- Java：整理中
-- Python：整理中
-- C与C++：未学习
