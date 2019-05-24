@@ -143,10 +143,5 @@ func main() {
 ```
 当客户端将用户输入的信息Send之后，服务器端通过Receive接收到了相应信息，然后通过Send发送了应答信息。
 
-![](images/8.2.websocket3.png?raw=true)
-
-图8.4 WebSocket服务器端接收到的信息
-
-通过上面的例子我们看到客户端和服务器端实现WebSocket非常的方便，Go的源码net分支中已经实现了这个的协议，我们可以直接拿来用，目前随着HTML5的发展，我想未来WebSocket会是Web开发的一个重点，我们需要储备这方面的知识。
 
 

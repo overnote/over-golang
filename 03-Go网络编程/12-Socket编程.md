@@ -1,23 +1,18 @@
-## 一 Socket编程
+## 一 Socket概念
 
 #### 1.1 Socket简介
 
-大部分底层网络编程都依赖于Socket编程：HTTP，IM通信，视频流传输的底层都是Socket。很多游戏服务器使用Socket编写服务器，因为对于HTTP协议来说，能够节省性能开支。  
-Socket起源于UNIX，本着UNIX一切皆文件的哲学，可以用 打开-读写-关闭 的方式操作。网络的Socket数据传输是一种特殊的I/O，Socket也是一种文件描述符。Socket也具有一个类似于打开文件的函数调用：Socket()，该函数返回一个整型的Socket描述符，随后的连接建立、数据传输等操作都是通过该Socket实现的。  
+大部分底层网络编程都依赖于Socket编程，包括：HTTP，IM通信，视频流传输，游戏服务器等。因为对于HTTP协议来说，直接使用Socket编程能够节省性能开支。  
 
-常用的Socket类型有两种：
-- 流式Socket（SOCK_STREAM）：面向连接，主要用于TCP服务；
-- 数据式Socket（SOCK_DGRAM）：无连接，主要用于UDP服务。
+Socket起源于UNIX，本着UNIX一切皆文件的哲学，可以用`打开-读写-关闭`的方式操作。网络的Socket数据传输是一种特殊的I/O，Socket也是一种文件描述符。Socket也具有一个类似于打开文件的函数调用：`Socket()`，该函数返回一个整型的Socket描述符，随后的连接建立、数据传输等操作都是通过该Socket实现的。  
 
-#### 1.2 Socket通信
+网络之间的进程如果要通信，需要先对socket进行唯一标识。在本地，网络之间通信可以通过`PID`来标识唯一，但是到了网络中，进程通过网络层的`IP`，传输层的`协议+端口`来标识（三元组：ip地址，协议，端口可以标识网络的唯一进程）。  
 
-网络之间的进程如果要通信，需要先对socket进行唯一标识。在本地，可以通过PID来标识唯一，但是到了网络中，进程通过网络层的 IP ，传输层的 协议+端口 来标识。  
+Web开发中，Socket编程主要面向OSI模型的第三层和第四层协议，即：IP协议，TCP协议，UDP协议，常见的分类有：
+- 流式Socket（SOCK_STREAM）：面向连接，主要用于TCP服务
+- 数据式Socket（SOCK_DGRAM）：无连接，主要用于UDP服务
 
-解释：网络层的“ip地址”可以唯一标识网络中的主机，而传输层的“协议+端口”可以唯一标识主机中的应用程序（进程），这样利用三元组（ip地址，协议，端口）就可以标识网络的进程。
-
-Web开发中，Socket编程主要面向OSI模型的第三层和第四层协议，即：IP协议，TCP协议，UDP协议。使用TCP/IP协议的应用程序通常采用应用编程接口：UNIX BSD的套接字（socket）。就目前而言，几乎所有的应用程序都是采用socket，而现在又是网络时代，网络中进程通信是无处不在，这就是为什么说“一切皆Socket”。
-
-#### 1.3 IPv4与IPv6
+#### 1.2 IPv4与IPv6
 
 目前的全球因特网所采用的协议族是TCP/IP协议。IP是TCP/IP协议中网络层的协议，是TCP/IP协议族的核心协议。目前主要采用的IP协议的版本号是4(简称为IPv4)。  
 
@@ -31,95 +26,81 @@ IPv6是下一版本的互联网协议，也可以说是下一代互联网的协�
 
 Go中提供了`ParseIP(s string) IP`函数会把一个IPv4或者IPv6的地址转化成IP类型。
 
-## 二 TCP
+## 二 TCP编程
 
-#### 1.1 Go的TCP服务端案例
+#### 1.1 服务端代码
+
 ```go
-package main
-import (
-	"net"
-	"fmt"
-	"log"
-	"time"
-)
-func main() {
 
-	address := net.TCPAddr{
-		IP: net.ParseIP("127.0.0.1"),
-		Port: 3000,
-	}
-
-	listener, err := net.ListenTCP("tcp4", &address)
-
-	if err != nil {
-		log.Fatal(err)
-	}
+//服务端处理从客户端接受的数据
+func handleConnection(c net.Conn) {
+	defer c.Close() //关闭conn
 
 	for {
 
-		conn, err := listener.AcceptTCP()
+		//1. 等待客户端通过conn发送信息
+		//2. 如果客户端没有wrtie[发送]，那么协程就阻塞在这里
+		fmt.Printf("服务器在等待客户端%s 发送信息\n", c.RemoteAddr().String())
+		buf := make([]byte, 1024)
+		n, err := c.Read(buf)
+		if err != nil {
+			log.Fatal(err)
+			break
+		}
 
+		//3. 显示客户端发送的内容到服务器的终端
+		fmt.Print(string(buf[:n]))
+	}
+}
+
+func main() {
+	l, err := net.Listen("tcp", "localhost:8888")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer l.Close()
+	for { //循环等待客户端访问
+		conn, err := l.Accept()
 		if err != nil {
 			log.Fatal(err)
 		}
+		fmt.Printf("访问客户端信息： con=%v 客户端ip=%v\n", conn, conn.RemoteAddr().String())
 
-		conn.SetReadDeadline(time.Now().Add(2 * time.Minute)) 		// set 2 minutes timeout
-
-		fmt.Println("远程地址为：", conn.RemoteAddr())
-
-		go func(conn *net.TCPConn) {								 //实现多并发执行连接
-				tick := time.Tick(5 * time.Second)  				//5秒请求一次
-				for now := range tick {
-					n, err := conn.Write([]byte(now.String()))
-					if err != nil {
-						log.Println(err)
-						conn.Close()
-						return
-					}
-					fmt.Println("second %d bytes to %s\n", n ,conn.RemoteAddr())
-				}
-		}(conn)
+		go handleConnection(conn)
 
 	}
-
 }
+
 ```
 
 #### 1.2 Go的TCP客户端案例
 ```go
-package main
-
-import (
-	"os"
-	"net"
-	"fmt"
-	"io/ioutil"
-)
-
-func main(){
-
-	addr := "127.0.0.1:3000"
-
-	tcpAddr, err := net.ResolveTCPAddr("tcp4", addr)
-	checkError(err)
-
-	conn, err := net.DialTCP("tcp", nil, tcpAddr)
-	checkError(err)
-
-	conn.Write([]byte("HEAD / HTTP/1.0\r\n\r\n"))
-
-	result, err := ioutil.ReadAll(conn)
-	checkError(err)
-
-	fmt.Println(string(result))
-
-	os.Exit(0)
-}
-
-func checkError(err error) {
+func main() {
+	conn, err := net.Dial("tcp", "localhost:8888")
 	if err != nil {
-		fmt.Println(os.Stderr, "错误：%s", err.Error())
-		os.Exit(1)
+		log.Fatal(err)
+	}
+
+	//客户端可以发送单行数据，然后就退出
+	reader := bufio.NewReader(os.Stdin) //os.Stdin 代表标准输入[终端]
+	for {
+		//从终端读取一行用户输入，并准备发送给服务器
+		line, err := reader.ReadString('\n')
+		if err != nil {
+			log.Fatal(err)
+		}
+		line = strings.Trim(line, "\r\n")
+
+		if line == "exit" {
+			fmt.Println("用户退出客户端")
+			break
+		}
+		//再将line 发送给 服务器
+		conent, err := conn.Write([]byte(line + "\n"))
+		if err != nil {
+			log.Fatal(err)
+		}
+		fmt.Printf("客户端发送了 %d 字节的数据到服务端\n", conent)
 	}
 }
 ```
@@ -194,15 +175,6 @@ func (c *UDPConn) WriteToUDP(b []byte, addr *UDPAddr) (n int, err os.Error)
 ```
 一个UDP的客户端代码如下所示,我们可以看到不同的就是TCP换成了UDP而已：
 ```Go
-
-package main
-
-import (
-	"fmt"
-	"net"
-	"os"
-)
-
 func main() {
 	if len(os.Args) != 2 {
 		fmt.Fprintf(os.Stderr, "Usage: %s host:port", os.Args[0])
@@ -231,16 +203,6 @@ func checkError(err error) {
 ```
 我们来看一下UDP服务器端如何来处理：
 ```Go
-
-package main
-
-import (
-	"fmt"
-	"net"
-	"os"
-	"time"
-)
-
 func main() {
 	service := ":1200"
 	udpAddr, err := net.ResolveUDPAddr("udp4", service)
