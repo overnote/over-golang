@@ -6,7 +6,7 @@
 
 Go提倡使用通信的方式代替共享内存，即使用通道channel。  
 
-![](../images/Golang/channel01.png)
+![](../images/Golang/channel-01.png)
 
 多个 goroutine 为了争抢数据，势必造成执行的低效率，使用队列的方式是最高效的， channel 就是一种队列一样的结构 。  
 
@@ -16,7 +16,7 @@ channel特性：
 - channel拥有类型，一个string的channle只能存放string类型数据
 
 如图所示：
-![](../images/Golang/并发-02.png)
+![](../images/Golang/channel-02.png)
 
 #### 1.1 channel的基本使用
 

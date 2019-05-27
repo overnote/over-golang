@@ -191,7 +191,7 @@ test...
 ```
 
 注意事项：不要使用编辑器的run功能，会出现路径错误，推荐使用命令build，项目路径分配如下：
-![](../images/Golang/框架-01.png)
+![](../images/Golang/gin-01.png)
 
 ## 七 静态文件
 
