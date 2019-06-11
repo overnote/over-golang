@@ -8,48 +8,44 @@
 
 贴士：基于Go的算法笔记一样在笔者计划之列，不过算法笔记位于[overnote](https://github.com/overnote)系列中自成一系。  
 
-## Golang推荐书籍
+## Go语言资料整理
 
-书籍列表：
-```
-《Go语言从入门到进阶实战》               - 简单不失深入，入门力荐
-《GoWeb编程》                         - Go语言Web编程基础    
-《Go并发编程》                         - 详细解释Go并发模型与使用
-《Go语言圣经》(英文版)                  - 书如其名
-《Go语言学习笔记》                      - 言简意赅，深入浅出，力荐
-```
+#### Go语言书籍
 
-贴士：《Go语言实战》同样十分经典，但因为大多内容与上述书籍重复，不推荐
+- [《Go语言从入门到进阶实战》](https://book.douban.com/subject/30240200/)：语法基础，详细解释了Go语法，入门力荐，但此书貌似比较冷门
+- [《GoWeb编程》](https://book.douban.com/subject/27204133/)：Go语言Web编程基础
+- [《Go并发编程》](https://book.douban.com/subject/27016236/)：详细解释Go并发模型与使用，部分语句组织欠佳
+- [《Go语言学习笔记》](https://book.douban.com/subject/26832468/)：言简意赅，深入浅出，难得好书，力荐
 
-## Golang资料收集
+#### Go语言资料
 
-开源书籍资料（有英文版的，推荐英文版）：
+- [《Go语言圣经》](https://github.com/gopl-zh/gopl-zh.github.com)
+- [《Go42》](https://github.com/ffhelicopter/Go42)
 - [《Go语言标准库》](https://github.com/polaris1119/The-Golang-Standard-Library-by-Example)
 - [《Go RPC 开发指南》](https://github.com/smallnest/go-rpc-programming-guide)
 - [《Go语言高级编程》](https://github.com/chai2010/advanced-go-programming-book)
 - [《深入解析Go》](https://github.com/tiancaiamao/go-internals)
-- [《Go42》](https://github.com/ffhelicopter/Go42)
 - [《研磨设计模式-Go实现》](https://github.com/senghoo/golang-design-pattern)
-- [《Go语言圣经》](https://github.com/gopl-zh/gopl-zh.github.com)
-- [《Mastering GO》](https://github.com/hantmac/Mastering_Go_ZH_CN)
 
-视频资料：
+#### Go视频资料
+
 - [韩顺平go基础](https://www.bilibili.com/video/av35928275) 
 - [Go微服务实战(收费)](https://study.163.com/course/introduction.htm?courseId=1209302815)
 
 ## 附录：博主自己的其他笔记
 
-[推荐书籍](https://github.com/ruyuejun/polaris)：综合了所有技术对应的书籍与书评
+[推荐书籍](https://github.com/ruyuejun/polaris)：综合了所有技术对应的书籍与书评 https://github.com/ruyuejun/polaris  
 
-[知识笔记汇总仓库](https://github.com/overnote)：所有技术笔记所在组织  
+[知识笔记汇总仓库](https://github.com/overnote)：所有技术笔记所在组织 https://github.com/overnote   
 
-各类技术分类索引：
-- [算法](https://github.com/overnote/Algorithm)：涉及数据结构、基础算法、算法进阶等内容，有Go、JS两个版本，未来增加C，Java
-- [服务端](https://github.com/overnote/Server)：涉及服务端常用技术，如：nginx、mysql、redis等
-- [JavaScript](https://github.com/overnote/JavaScript)：涉及网页开发、JS学习、Node、vue、react等
-- [Go](https://github.com/overnote/Golang)：
-- [Java]()：整理中
-- [Python]()：整理中
+对上述仓库的分类索引：  
+- [Server](https://github.com/overnote/server)：包含常用服务端技术：Nginx、mysql、redis、mongodb、linux系统等
+- [数据结构与算法](https://github.com/overnote/algorithm)：数据结构与算法笔记，主讲Go版本，另附JS，Java版本，未来可能增加C版
+- [JavaScript](https://github.com/overnote/javascript)：包含网页、JS、前端工程化、Node、vue、react等JS相关领域技术
+- [Go](https://github.com/overnote/golang)：详尽的Go领域笔记，包括语法、并发编程、web编程、微服务等
+- [Java](https://github.com/overnote/java)：整理中，Java篇幅过大，整理困难，可能会鸽
+- [Python](https://github.com/overnote/python)：整理中
+- [计算机考研](https://github.com/overnote/postgraduate)：整理中
 
 ## 感谢
 
