@@ -45,7 +45,7 @@
 - [Go](https://github.com/overnote/golang)：详尽的Go领域笔记，包括语法、并发编程、web编程、微服务等
 - [Java](https://github.com/overnote/java)：整理中，Java篇幅过大，整理困难，可能会鸽
 - [Python](https://github.com/overnote/python)：整理中
-- [计算机考研](https://github.com/overnote/postgraduate)：整理中
+- [计算机底层六巨头](https://github.com/overnote/sixg)：整理中
 
 ## 感谢
 
