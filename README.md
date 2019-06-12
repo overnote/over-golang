@@ -45,7 +45,7 @@
 - [Go](https://github.com/overnote/golang)：详尽的Go领域笔记，包括语法、并发编程、web编程、微服务等
 - [Java](https://github.com/overnote/java)：整理中，Java篇幅过大，整理困难，可能会鸽
 - [Python](https://github.com/overnote/python)：整理中
-- [计算机考研](https://github.com/overnote/postgraduate)：整理中
+- [计算机底层五巨头与考研](https://github.com/overnote/fivex)：组成原理，操作系统，网络，数据结构与程序设计，数据库概论，编译原理，以及附录考研数学，英语，政治
 
 ## 感谢
 
