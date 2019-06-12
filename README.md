@@ -12,14 +12,14 @@
 
 #### Go语言书籍
 
-- [《Go语言从入门到进阶实战》](https://book.douban.com/subject/30240200/)：语法基础，详细解释了Go语法，入门力荐，但此书貌似比较冷门
+- [《Go语言从入门到进阶实战》](https://book.douban.com/subject/30240200/)：语法基础，入门力荐，但此书比较冷门
+- [《Go语言圣经》](https://github.com/gopl-zh/gopl-zh.github.com)：中文翻译较差，推荐购买原版英文书籍
 - [《GoWeb编程》](https://book.douban.com/subject/27204133/)：Go语言Web编程基础
-- [《Go并发编程》](https://book.douban.com/subject/27016236/)：详细解释Go并发模型与使用，部分语句组织欠佳
-- [《Go语言学习笔记》](https://book.douban.com/subject/26832468/)：言简意赅，深入浅出，难得好书，力荐
+- [《Go并发编程》](https://book.douban.com/subject/27016236/)：Go并发模型介绍的好书，但该书语句组织极度欠佳，推荐读直接阅读本笔记`02-Go并发编程`
+- [《Go语言学习笔记》](https://book.douban.com/subject/26832468/)：言简意赅，深入浅出，力荐
 
 #### Go语言资料
 
-- [《Go语言圣经》](https://github.com/gopl-zh/gopl-zh.github.com)
 - [《Go42》](https://github.com/ffhelicopter/Go42)
 - [《Go语言标准库》](https://github.com/polaris1119/The-Golang-Standard-Library-by-Example)
 - [《Go RPC 开发指南》](https://github.com/smallnest/go-rpc-programming-guide)
@@ -29,14 +29,13 @@
 
 #### Go视频资料
 
-- [韩顺平go基础](https://www.bilibili.com/video/av35928275) 
-- [Go微服务实战(收费)](https://study.163.com/course/introduction.htm?courseId=1209302815)
+- [韩顺平go基础](https://www.bilibili.com/video/av35928275)
 
 ## 附录：博主自己的其他笔记
 
-[推荐书籍](https://github.com/ruyuejun/polaris)：综合了所有技术对应的书籍与书评 https://github.com/ruyuejun/polaris  
+[推荐书籍](https://github.com/ruyuejun/polaris)：综合了所有技术对应的书籍与书评  
 
-[知识笔记汇总仓库](https://github.com/overnote)：所有技术笔记所在组织 https://github.com/overnote   
+[知识笔记汇总仓库](https://github.com/overnote)：笔者所有笔记存放的组织 
 
 对上述仓库的分类索引：  
 - [Server](https://github.com/overnote/server)：包含常用服务端技术：Nginx、mysql、redis、mongodb、linux系统等
