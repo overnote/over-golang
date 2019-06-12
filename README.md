@@ -15,7 +15,6 @@
 - [《Go语言从入门到进阶实战》](https://book.douban.com/subject/30240200/)：语法基础，入门力荐，但此书比较冷门
 - [《Go语言圣经》](https://github.com/gopl-zh/gopl-zh.github.com)：中文翻译较差，推荐购买原版英文书籍
 - [《GoWeb编程》](https://book.douban.com/subject/27204133/)：Go语言Web编程基础
-- [《Go并发编程》](https://book.douban.com/subject/27016236/)：Go并发模型介绍的好书，但该书语句组织极度欠佳，推荐读直接阅读本笔记`02-Go并发编程`
 - [《Go语言学习笔记》](https://book.douban.com/subject/26832468/)：言简意赅，深入浅出，力荐
 
 #### Go语言资料
