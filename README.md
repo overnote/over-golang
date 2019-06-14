@@ -1,12 +1,14 @@
-## 关于本笔记
+## 说明
 
-这份笔记是笔者自学`Golang`时的资料总结，结合了很多书籍、博主以及开源作品的内容。   
-
-笔者也收到了大量的反馈和建议，笔记仍然会在我的学习旅程中不断更新，绝对不`鸽`。  
+这份笔记是小伙伴们在自学`Golang`时的资料总结，结合了很多书籍、博客以及开源作品的内容，同时也收到了很多反馈和建议，笔记仍然会在学习旅程中不断更新，绝对不`鸽`。  
 
 很多章节仍然在完善中，如Go在微服务中的实践、框架的具体分析、Go的源码分析等等，后续会完善剩余章节，并分享实践经验，敬请期待。  
 
-贴士：基于Go的算法笔记一样在笔者计划之列，不过算法笔记位于[overnote](https://github.com/overnote)系列中自成一系。  
+贴士：基于Go的算法笔记一样在小伙伴们的计划之列，不过算法过于庞大，被独立放置在了[overnote](https://github.com/overnote)系列中自成一系。 
+
+## Go的学习路径图
+
+------TODO--------
 
 ## Go语言资料整理
 
@@ -30,13 +32,9 @@
 
 - [韩顺平go基础](https://www.bilibili.com/video/av35928275)
 
-## 附录：博主自己的其他笔记
+## 附录：笔记汇总
 
-[推荐书籍](https://github.com/ruyuejun/polaris)：综合了所有技术对应的书籍与书评  
-
-[知识笔记汇总仓库](https://github.com/overnote)：笔者所有笔记存放的组织 
-
-对上述仓库的分类索引：  
+[推荐书籍](https://github.com/ruyuejun/polaris)：综合了所有技术对应的书籍与书评    
 - [Server](https://github.com/overnote/server)：包含常用服务端技术：Nginx、mysql、redis、mongodb、linux系统等
 - [数据结构与算法](https://github.com/overnote/algorithm)：数据结构与算法笔记，主讲Go、C版本，另附JS，Java版本
 - [JavaScript](https://github.com/overnote/javascript)：包含网页、JS、前端工程化、Node、vue、react等JS相关领域技术
