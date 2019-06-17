@@ -174,3 +174,7 @@ func (rw *RWMutex) RLocker() Locker
 返回值Locker是实现了接口`sync.Lokcer`的值，该接口同样被 `*sync.Mutex`和`*sync.RWMutex`实现，包含方法：`Lock`和`Unlock`。  
 
 当调用读写锁的RLocker方法后，获得的结果是读写锁本身，该结果可以调用Lock和Unlock方法，和RLock，RUnlock使用一致。
+
+#### 2.4 最后的说明
+
+读写锁的内部其实使用了互斥锁来实现，他们都使用了同步机制：信号量。
