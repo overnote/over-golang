@@ -6,9 +6,10 @@
 
 贴士：
 - 基于Go的算法笔记一样在小伙伴们的计划之列，不过算法过于庞大，被独立放置在了[overnote](https://github.com/overnote)系列中自成一系。 
-- 推荐的书籍与资料开头有三种标识：`已录`（该书/资料知识点已记录），`录制`（正在记录中），`待审`（本书/资料仍在审阅中）
+- 推荐书籍与资料开头有三种标识：`已录`（该资料知识点已记录），`录制`（正在记录中），`待审`（仍在审阅中）
+- 部分优秀的书籍并未出现在推荐列表，比如《Go In Action》，因为书籍内容已经被别的优秀书籍覆盖到了，笔者不想做内容重复的推荐
 
-## Go的学习路径图
+## Go学习路径图
 
 ![](./images/Golang/golang-developer-roadmap-zh-CN.png) 
 
@@ -21,14 +22,14 @@
 #### Go语言书籍
 
 - 已录-[《Go语言从入门到进阶实战》](https://book.douban.com/subject/30240200/)：语法基础，入门力荐，但此书比较冷门
-- 已录-[《Go语言圣经》](https://github.com/gopl-zh/gopl-zh.github.com)：中文翻译较差，推荐购买原版英文书籍
+- 已录-[《Go程序设计语言》](https://book.douban.com/subject/27044219/)：被誉为Go语言圣经
 - 录制-[《GoWeb编程》](https://book.douban.com/subject/27204133/)：Go语言Web编程基础
-- 已录-[《Go并发编程实战》](https://book.douban.com/subject/27016236/)：详细解读go并发原理，但是本书语言组织极其欠佳（请作者原谅我，如果本书第三版修正语言组织问题，将会是上乘佳作）
+- 已录-[《Go并发编程实战》](https://book.douban.com/subject/27016236/)：解读go并发原理，但语言组织极其欠佳（若修正语言组织问题，将会是上乘佳作）
 - 待审-[《Go语言学习笔记》](https://book.douban.com/subject/26832468/)：言简意赅，深入浅出，力荐
 
 #### Go语言资料
 
-- 录制-[《the way to go》](https://github.com/Unknwon/the-way-to-go_ZH_CN/blob/master/eBook/directory.md)
+- 录制-[《Go语言圣经》](https://github.com/gopl-zh/gopl-zh.github.com)：《Go程序设计语言》的中译文地址
 - 待审-[《Go42》](https://github.com/ffhelicopter/Go42)
 - 待审-[《Go语言标准库》](https://github.com/polaris1119/The-Golang-Standard-Library-by-Example)
 - 已录-[《GoWeb编程》(astaxie)](https://github.com/astaxie/build-web-application-with-golang)
@@ -41,7 +42,11 @@
 
 - 已录-[韩顺平go基础](https://www.bilibili.com/video/av35928275)
 
-## 本书章节目录
+## 本笔记在线预览
+
+===TODO===
+
+## 本笔记章节目录
 
 ===TODO===
 
