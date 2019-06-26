@@ -1,5 +1,4 @@
-
-## 三 http包运行机制
+## 一 http包运行机制
 
 ![](../images/Golang/net-01.png)
 
@@ -55,7 +54,7 @@ func (srv *Server) Serve(l net.Listener) error {
 那么如何具体分配到相应的函数来处理请求呢？conn首先会解析request:`c.readRequest()`,然后获取相应的handler:`handler := c.server.Handler`，也就是我们刚才在调用函数`ListenAndServe`时候的第二个参数，我们前面例子传递的是nil，也就是为空，那么默认获取`handler = DefaultServeMux`,那么这个变量用来做什么的呢？对，这个变量就是一个路由器，它用来匹配url跳转到其相应的handle函数，那么这个我们有设置过吗?有，我们调用的代码里面第一句不是调用了`http.HandleFunc("/", sayhelloName)`嘛。这个作用就是注册了请求`/`的路由规则，当请求uri为"/"，路由就会转到函数sayhelloName，DefaultServeMux会调用ServeHTTP方法，这个方法内部其实就是调用sayhelloName本身，最后通过写入response的信息反馈到客户端。
 ![](../images/Golang/net-02.png)
 
-## 四 http包详解
+## 二 http包详解
 
 Go的http有两个核心功能：Conn、ServeMux。  
 
