@@ -10,7 +10,6 @@
 
 ![](./images/Golang/golang-developer-roadmap-zh-CN.png) 
 
-上述路径图总结地址：https://github.com/Alikhll/golang-developer-roadmap
 
 ## Go语言资料整理
 
