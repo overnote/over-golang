@@ -19,30 +19,22 @@
 
 #### Go语言书籍
 
-- 已录-[《Go语言从入门到进阶实战》](https://book.douban.com/subject/30240200/)：语法基础，入门力荐，但此书比较冷门
-- 已录-[《Go程序设计语言》](https://book.douban.com/subject/27044219/)：被誉为Go语言圣经，[点我查看中译资料](https://github.com/gopl-zh/gopl-zh.github.com)
-- 已录-[《GoWeb编程》](https://book.douban.com/subject/27204133/)：Go语言Web编程基础
-- 已录-[《Go并发编程实战》](https://book.douban.com/subject/27016236/)：解读go并发原理，但语言组织极其欠佳（若修正语言组织问题，将会是上乘佳作）
-- 待审-[《Go语言学习笔记》](https://book.douban.com/subject/26832468/)：言简意赅，深入浅出，力荐
-
-以下书籍，均被上述书籍知识点囊括，但是依然是经典书籍：
-```
-    《Go语言实战》
-```
+- [《Go语言从入门到进阶实战》](https://book.douban.com/subject/30240200/)：语法基础，入门力荐，但此书比较冷门
+- [[《Go语言实战》](https://book.douban.com/subject/27015617/)](https://book.douban.com/subject/30240200/)：In Action经典，Go基础大全
+- [《Go程序设计语言》](https://book.douban.com/subject/27044219/)：被誉为Go语言圣经，[点我查看中译资料](https://github.com/gopl-zh/gopl-zh.github.com)
+- [《GoWeb编程》](https://book.douban.com/subject/27204133/)：Go语言Web编程基础
+- [《Go并发编程实战》](https://book.douban.com/subject/27016236/)：解读go并发原理，但语言组织极其欠佳（若修正语言组织问题，将会是上乘佳作）
+- [《Go语言学习笔记》](https://book.douban.com/subject/26832468/)：言简意赅，深入浅出，力荐
 
 #### Go语言资料
 
-- 待审-[《Go42》](https://github.com/ffhelicopter/Go42)
-- 待审-[《Go语言标准库》](https://github.com/polaris1119/The-Golang-Standard-Library-by-Example)
-- 已录-[《GoWeb编程》(astaxie)](https://github.com/astaxie/build-web-application-with-golang)
-- 待审-[《Go RPC 开发指南》](https://github.com/smallnest/go-rpc-programming-guide)
-- 待审-[《Go语言高级编程》](https://github.com/chai2010/advanced-go-programming-book)
-- 待审-[《深入解析Go》](https://github.com/tiancaiamao/go-internals)
-- 待审-[《研磨设计模式-Go实现》](https://github.com/senghoo/golang-design-pattern)
-
-#### Go视频资料
-
-- 已录-[韩顺平go基础](https://www.bilibili.com/video/av35928275)
+- [《Go42》](https://github.com/ffhelicopter/Go42)
+- [《Go语言标准库》](https://github.com/polaris1119/The-Golang-Standard-Library-by-Example)
+- [《GoWeb编程》(astaxie)](https://github.com/astaxie/build-web-application-with-golang)
+- [《Go RPC 开发指南》](https://github.com/smallnest/go-rpc-programming-guide)
+- [《Go语言高级编程》](https://github.com/chai2010/advanced-go-programming-book)
+- [《深入解析Go》](https://github.com/tiancaiamao/go-internals)
+- [《研磨设计模式-Go实现》](https://github.com/senghoo/golang-design-pattern)
 
 
 ## 附录：笔记汇总
