@@ -21,6 +21,8 @@ protobuf优点：
 
 ## 三 protobuf安装
 
+#### 3.1 linux安装protobuf
+
 下面列出centOS的安装方式：
 ```
 # 安装依赖
@@ -39,5 +41,18 @@ make install
 ldconfig        # 刷新共享库
 
 # 测试
-protoc -h
+protoc --version
+```
+
+#### 3.2 mac安装protobuf
+
+mac推荐使用homebrew安装：  
+```
+# 安装
+brew install protobuf
+brew install automake
+brew install libtool
+
+# 测试
+protoc --version
 ```
