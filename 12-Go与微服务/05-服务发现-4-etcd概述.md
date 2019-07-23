@@ -4,7 +4,6 @@ etcd是一个分布式KV存储软件，其利用raft算法在集群中同步key-
 
 集群一般采取大多数模型(quorum)来选举leader，即集群需要2N+1个节点，这时总能产生1个leader，多个follower。  
 
-
 etcd调用阶段：
 - 阶段1：调用者调用leader，leader会将kv数据存储在日志中，并利用实时算法raft进行复制
 - 阶段2：当复制给了N+1个节点后，本地提交，返回给客户端，最后leader异步通知follower完成通知
