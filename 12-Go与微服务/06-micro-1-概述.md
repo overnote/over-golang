@@ -50,93 +50,13 @@ go run main.go
 
 创建微服务命令：
 ```
-new         # 创建 通过指定相对于$GOPATH的目录路径，创建一个新的微服务。
+micro new   # 创建 通过指定相对于$GOPATH的目录路径，创建一个新的微服务。
+            # 参数 --namespace "test"   服务的命名空间
+            # 参数 --type "srv"         服务类型，常用的有 web srv api
+            # 参数 --fqdn               FQDN of service e.g com.example.srv.service (defaults tonamespace.type.alias)
+            # 参数 --alias              别名是在指定时作为组合名的一部分使用的短名称
 
-USAGE:
-#用法
-micro new [command options][arguments...]
---namespace     "go.micro" Namespace for the service e.g com.example #服务的命名空间
---type "srv"    Type of service e.g api, fnc, srv, web #服务类型
---fqdn          FQDN of service e.g com.example.srv.service (defaults tonamespace.type.alias)
---alias         Alias is the short name used as part of combined name if specified
-                #   别名是在指定时作为组合名的一部分使用的短名称 run Run the micro runtime
-run             Run the micro runtime # 运行 运行这个微服务时间
-```
-
-创建2个服务：
-```
-$micro new --type "srv" micro/rpc/srv
-#"srv" 是表示当前创建的微服务类型 
-#sss是相对于go/src下的文件夹名称 可以根据项目进行设置 
-#srv是当前创建的微服务的文件名
-
-Creating service go.micro.srv.srv in /home/itcast/go/src/micro/rpc/srv
-
-.
-#主函数
-├── main.go
-#插件
-├── plugin.go #被调用函数
-├── handler
-│ └── example.go #订阅服务
-├── subscriber
-│ └── example.go #proto协议
-├── proto/example
-│ └── example.proto #docker生成文件
-├── Dockerfile
-├── Makefile
-└── README.md
-
-
-download protobuf for micro:
-
-brew install protobuf
-go get -u github.com/golang/protobuf/{proto,protoc-gen-go}
-go get -u github.com/micro/protoc-gen-micro
-
-compile the proto file example.proto:
-
-cd /home/itcast/go/src/micro/rpc/srv
-protoc --proto_path=. --go_out=. --micro_out=. proto/example/example.proto
-
-#使用创建srv时给的protobuf命令保留用来将proto文件进行编译
-micro new --type "web" micro/rpc/web
-Creating service go.micro.web.web in /home/itcast/go/src/micro/rpc/web
-
-.
-#主函数
-├── main.go
-#插件文件
-├── plugin.go
-#被调用处理函数
-├── handler
-│ └── handler.go
-#前端页面
-├── html
-│ └── index.html
-#docker生成文件
-├── Dockerfile
-├── Makefile
-└── README.md
-
-#编译后将web端呼叫srv端的客户端连接内容修改为srv的内容 
-#需要进行调通
-
-```
-
-启动consul进行监管:
-```
-consul agent -dev
-```
-
-对srv服务进行的操作:
-```
-#根据提示将proto文件生成为.go文件
-cd /home/itcast/go/src/micro/rpc/srv
-protoc --proto_path=. --go_out=. --micro_out=. proto/example/example.proto #如果报错就按照提示将包进行下载
-go get -u github.com/golang/protobuf/{proto,protoc-gen-go}
-go get -u github.com/micro/protoc-gen-micro
-#如果还不行就把以前的包删掉从新下载
+micro run   # 运行这个微服务
 ```
 
 
