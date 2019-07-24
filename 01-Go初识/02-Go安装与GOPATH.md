@@ -46,4 +46,4 @@ win的GOPATH重设办法：进入环境变量
 
 #### 2.2 GO MOD
 
-在go1.11版本之后，可以不再依赖gopath，从此摆脱gopath的噩梦。go mod相关介绍，参见 目录[02-12节:依赖管理](https://github.com/overnote/golang/blob/master/02-Go%E8%AF%AD%E6%B3%95/12-%E5%8C%85%E4%B8%8E%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86.md)
+在go1.11版本之后，可以不再依赖gopath，从此摆脱gopath的噩梦。go mod相关介绍，参见 目录[02-12节:依赖管理](https://github.com/overnote/golang/blob/master/02-Go语法/12-包与依赖管理.md)
