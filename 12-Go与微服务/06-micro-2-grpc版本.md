@@ -171,6 +171,3 @@ func ExampleCall(w http.ResponseWriter, r *http.Request) {
     } 
 }
 ```
-
-## 关于插件化
-Go Micro跟其他工具最大的不同是它是插件化的架构，这让上面每个包的具体实现都可以切换出去。举个例子，默 认的服务发现的机制是通过Consul，但是如果想切换成etcd或者zookeeper 或者任何你实现的方案，都是非常便 利的。

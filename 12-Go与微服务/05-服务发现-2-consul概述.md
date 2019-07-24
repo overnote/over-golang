@@ -60,7 +60,7 @@ consul agent -server -bootstrap-expect 2 -data-dir ~/tmp/consul/data -node=n2 -b
 node3：
 ```
 # 以client模式运行cosnul agent，-join 加入到已有的集群中去。
-$ consul agent -data-dir /tmp/consul -node=n3 -bind=192.168.110.124 -config-dir /etc/consul.d -rejoin -join 192.168.110.123
+consul agent -data-dir /tmp/consul -node=n3 -bind=192.168.110.124 -config-dir /etc/consul.d -rejoin -join 192.168.110.123
 ```
 
 #### 3.4 查看集群成员

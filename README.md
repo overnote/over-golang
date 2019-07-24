@@ -39,12 +39,12 @@
 **推荐书籍**地址：https://github.com/ruyuejun/polaris  
 
 **OverNote分类**：  
-- [架构-分布式与微服务](https://github.com/overnote/architecture/)：分布式与微服务相关
-- [计算机底层五巨头](https://github.com/overnote/fivex)：数据结构与算法、操作系统、网络、组成原理、编译原理
-- [服务端常用技术](https://github.com/overnote/serverside)：nginx、mysql、redis、mongodb、linux系统等
 - [Go](https://github.com/overnote/golang)：详尽的Go领域笔记：Go语法、Go并发编程、GoWeb编程、Go微服务等
-- [JavaScript](https://github.com/overnote/javascript)：包含网页、JS、前端工程化、Node、vue、react、小程序等JS相关领域技术
-- [Flutter](https://github.com/overnote/flutter)：整理中
-- [Python](https://github.com/overnote/python)：整理中
-- [Java](https://github.com/overnote/java)：整理中
-
+- [分布式与微服务架构](https://github.com/overnote/architecture/)：分布式与微服务等架构相关笔记
+- [底层五巨头-数据结构与算法](https://github.com/overnote/fivex-algorithm)：以C/Go实现为主记录数据结构与算法的笔记
+- [服务端常用技术](https://github.com/overnote/serverside)：nginx、mysql、redis、mongodb、linux系统基础等服务端常用技术汇总笔记
+- [JavaScript](https://github.com/overnote/javascript)：包含网页、JS、前端工程化、Node、vue、react、小程序等JS相关领域技术笔记
+- [大数据](https://github.com/overnote/bigdata)：大数据笔记，完善中
+- [Flutter](https://github.com/overnote/flutter)：Dart与Flutter相关笔记，完善中
+- [Python](https://github.com/overnote/python)：Python相关笔记，完善中
+- [Java](https://github.com/overnote/java)：Java相关笔记，完善中
