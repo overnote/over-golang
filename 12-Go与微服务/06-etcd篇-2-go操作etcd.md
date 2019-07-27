@@ -1,6 +1,4 @@
-## 一 golang简单操作etcd示例
-
-#### 1.1 示例1 增删改查
+## 一 golang对etcd的增删改查
 
 ```go
 package main
@@ -103,6 +101,33 @@ func main() {
 }
 ```
 
-如何批量操作：
+## 二 批量操作
+
 - 批量删除：`kv.Delete(context.TODO(), "/lesson/", clientv3.WithPrevfix())`
 - 批量按顺序删除，并删除2个：`kv.Delete(context.TODO(), "/lesson/lesson1", clientv3.WithFromKey(),clientv3.WithLimit(2))`
+
+## 三  使用OP操作代替原有的增删改查
+
+```go
+
+	// 创建Op
+	putOp := clientv3.OpPut("/cron/jobs/job8", "888")
+	// 执行Op
+	opR, err := kv.Do(context.TODO(), putOp)
+	if err != nil {
+		fmt.Println("putOp err:", err)
+		return
+	}
+	fmt.Println("写入Revision：", opR.Put().Header.Revision)
+
+	// 创建Op
+	getOp := clientv3.OpGet("/cron/jobs/job8")
+	// 执行Op
+	opR2, err := kv.Do(context.TODO(), getOp)
+	if err != nil {
+		fmt.Println("getOp err:", err)
+		return
+	}
+	fmt.Println("获取Revisoon：", opR2.Get().Kvs[0].ModRevision)
+	fmt.Println("获取Value：", opR2.Get().Kvs[0].Value)
+```
