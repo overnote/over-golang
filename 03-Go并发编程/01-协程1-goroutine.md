@@ -173,6 +173,30 @@ func main() {
 命令行会不断地输出 tick，同时可以使用 fmt.Scanln()接受用户输入。两个环节可以同时进行，直到按 Enter键时将输入的内容写入 input变量中井返回，
 整个程序终止。
 
+#### 3.2 一道基础面试题
+
+示例一：
+```go
+	for i := 1; i <= 10; i++ {
+		go func(){
+			fmt.Println(i)		// 全部打印11
+		}()
+
+	}
+	time.Sleep(time.Second)
+```
+
+示例二：
+```go
+	for i := 1; i <= 10; i++ {
+		go func(i int){
+			fmt.Println(i)		// 打印一组无规律数字
+		}(i)
+
+	}
+	time.Sleep(time.Second)
+```
+
 ## 四 Go中获取协程结果的办法
 
 Go中可以使用全局互斥锁（不推荐）与channel的方式进行协程通信。
