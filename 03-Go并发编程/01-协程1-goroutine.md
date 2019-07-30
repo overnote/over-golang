@@ -197,6 +197,20 @@ func main() {
 	time.Sleep(time.Second)
 ```
 
+示例三：
+```go
+	for i := 1; i <= 10; i++ {
+		go func(i int){
+			if i == 5 {
+				runtime.Gosched()	// 协程让出，5永远不会第一输出
+			}
+			fmt.Println(i)		// 打印一组无规律协程
+		}(i)
+
+	}
+	time.Sleep(time.Second)
+```
+
 ## 四 Go中获取协程结果的办法
 
 Go中可以使用全局互斥锁（不推荐）与channel的方式进行协程通信。
