@@ -9,7 +9,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/garyburd/redigo/redis"
+	"go get github.com/gomodule/redigo/redis"
 )
 
 
@@ -51,7 +51,7 @@ import (
 	"os/signal"
 	"syscall"
 	"time"
-	"github.com/garyburd/redigo/redis"
+	"go get github.com/gomodule/redigo/redis"
 )
 
 var (

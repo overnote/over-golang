@@ -15,10 +15,11 @@
 #### 3.1 书籍
 
 - [《Go语言从入门到进阶实战》](https://book.douban.com/subject/30240200/)：语法基础，入门力荐，但此书比较冷门
-- [《Go程序设计语言》](https://book.douban.com/subject/27044219/)：Go语言圣经，[点我查看中译资料](https://github.com/gopl-zh/gopl-zh.github.com)
+- [《Go程序设计语言》](https://book.douban.com/subject/27044219/)：Go语言圣经，[查看中译资料](https://github.com/gopl-zh/gopl-zh.github.com)
 - [《GoWeb编程》](https://book.douban.com/subject/27204133/)：Go语言Web编程基础
 - [《Go并发编程实战》](https://book.douban.com/subject/27016236/)：解读go并发原理，但语言组织欠佳（若修正语言组织问题，将会是上乘佳作）
 - [《Go语言学习笔记》](https://book.douban.com/subject/26832468/)：言简意赅，深入浅出，力荐
+- [《Go语言高级编程》](https://book.douban.com/subject/34442131/)：深入理解Go必备，[查看开源文档](https://github.com/chai2010/advanced-go-programming-book)
 
 #### 3.2 资料
 
@@ -26,7 +27,6 @@
 - [《Go语言标准库》](https://github.com/polaris1119/The-Golang-Standard-Library-by-Example)
 - [《GoWeb编程》(astaxie)](https://github.com/astaxie/build-web-application-with-golang)
 - [《Go RPC 开发指南》](https://github.com/smallnest/go-rpc-programming-guide)
-- [《Go语言高级编程》](https://github.com/chai2010/advanced-go-programming-book)
 - [《深入解析Go》](https://github.com/tiancaiamao/go-internals)
 - [《研磨设计模式-Go实现》](https://github.com/senghoo/golang-design-pattern)
 
@@ -40,7 +40,7 @@
 **OverNote分类**：  
 - [Go](https://github.com/overnote/golang)：详尽的Go领域笔记：Go语法、Go并发编程、GoWeb编程、Go微服务等
 - [分布式与微服务架构](https://github.com/overnote/architecture/)：分布式与微服务等架构相关笔记
-- [底层五巨头-数据结构与算法](https://github.com/overnote/fivex-algorithm)：以C/Go实现为主记录数据结构与算法的笔记
+- [数据结构与算法](https://github.com/overnote/algorithm)：以C/Go实现为主记录数据结构与算法的笔记
 - [服务端常用技术](https://github.com/overnote/serverside)：nginx、mysql、redis、mongodb、linux系统基础等服务端常用技术汇总笔记
 - [JavaScript](https://github.com/overnote/javascript)：包含网页、JS、前端工程化、Node、vue、react、小程序等JS相关领域技术笔记
 - [大数据](https://github.com/overnote/bigdata)：大数据笔记，完善中
