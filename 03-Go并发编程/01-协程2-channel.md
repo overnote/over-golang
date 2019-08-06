@@ -289,22 +289,119 @@ if ok == false {
 ```
 给被关闭的通道发送数据会造成panic，不过已经关闭的通道在接收数据时不会发生阻塞。
 
-#### 1.7 全局唯一操作
+## 二 channel示例
 
-某些函数只允许调用一次，但是有goroutine的情况下无法控制，Go引入了Once：
+#### 2.1 示例一 限制并发
 
-```Go
-var a string
-var onec sync.Once
-func setup() {
-    a = “hi”
+耗时操作timeMore，现在有100个并发，限制为5个：
+```go
+package main
+
+import (
+	"time"
+	"fmt"
+)
+
+func timeMore(ch chan string) {
+	
+	// 执行前先注册，写不进去就会阻塞
+	ch <- "任务"			
+
+	fmt.Println("模拟耗时操作")
+	time.Sleep(time.Second)	// 模拟耗时操作
+
+	// 任务执行完毕，则管道中销毁一个任务
+	<-ch
+
 }
-func doprint() {
-    once.Do(setup)
-    print(a)
+
+func main() {
+
+	ch := make(chan string, 5)
+
+	// 开启100个协程
+	for i: = 0; i < 100; i++ {
+		go timeMore(ch)
+	}
+
+	for {
+		time.Sleep(time.Second)
+	}
+
 }
 ```
-如果主协程退出，那么其他子协程也会退出
 
+#### 2.2 生产者消费者模型
+
+方式一：无缓冲区
+```go
+package main
+ 
+// 无缓冲的channel
+ 
+import (
+	"fmt"
+	"time"
+)
+ 
+func produce(ch chan<- int) {
+	for i := 0; i < 10; i++ {
+		ch <- i
+		fmt.Println("Send:", i)
+	}
+}
+ 
+func consumer(ch <-chan int) {
+	for i := 0; i < 10; i++ {
+		v := <-ch
+		fmt.Println("Receive:", v)
+	}
+}
+ 
+// 因为channel没有缓冲区，所以当生产者给channel赋值后，
+// 生产者线程会阻塞，直到消费者线程将数据从channel中取出
+// 消费者第一次将数据取出后，进行下一次循环时，消费者的线程
+// 也会阻塞，因为生产者还没有将数据存入，这时程序会去执行
+// 生产者的线程。程序就这样在消费者和生产者两个线程间不断切换，直到循环结束。
+func main() {
+	ch := make(chan int)
+	go produce(ch)
+	go consumer(ch)
+	time.Sleep(1 * time.Second)
+}
+```
+
+方式二：带缓冲区
+```go
+package main
+ 
+// 带缓冲区的channel
+ 
+import (
+	"fmt"
+	"time"
+)
+ 
+func produce(ch chan<- int) {
+	for i := 0; i < 10; i++ {
+		ch <- i
+		fmt.Println("Send:", i)
+	}
+}
+ 
+func consumer(ch <-chan int) {
+	for i := 0; i < 10; i++ {
+		v := <-ch
+		fmt.Println("Receive:", v)
+	}
+}
+ 
+func main() {
+	ch := make(chan int, 10)
+	go produce(ch)
+	go consumer(ch)
+	time.Sleep(1 * time.Second)
+}
+```
 
 
