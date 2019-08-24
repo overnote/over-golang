@@ -1,28 +1,3 @@
-## 一 Go安装
-
-推荐使用官方的安装包直接安装，下载地址：https://golang.org/dl/  
-
-```
-Win安装：
-        打开Win安装包下一步下一步即可，默认安装在目录：c:\Go
-
-Mac安装：
-        需要预装Xcode，然后打开Mac安装包下一步下一步即可  
-
-Linux安装：
-        wget https://storage.googleapis.com/golang/go1.12.1.linux-amd64.tar.gz
-        tar zxvf go*.tar.gz -C /usr/local/ 
-        # 配置环境
-        vim /etc/profile
-        export GOROOT=/usr/local/go         # 默认/usr/local/go/go,（新版go目录下还有一个go目录）
-        export PATH=$PATH:$GOROOT/bin
-        export GOPATH=$HOME/goproject       # 可选配置：Go项目目录，1.12版本后推荐使用go mod，不再使用GOPATH
-​        source /etc/profile 
-
-测试安装： 
-        go version
-```
-
 ## 二  Go环境
 
 #### 2.1 GOPATH

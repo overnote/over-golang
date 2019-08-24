@@ -4,19 +4,21 @@
 ```
 syntax = "proto3";                  
 
-// 第一个消息
 message HelloRequest {
-  string name = 1;                 // 1-4分别是键对应的数字id
+  string name = 1; 
   int32 height = 2;       
   string email = 3;          
   repeated int32 weight = 4 [packed=true];      
 }
 
-// 第二个消息
 message TestResponse {
     string text = 1;
 }
 ```
+
+说明：
+- 上述示例中，创建了2个消息HelloRequest和TestResponse
+- 消息中的值，1-4分别是键对应的数字id
 
 ## 二 protobuf语法
 
@@ -27,7 +29,8 @@ message TestResponse {
 - repeated：表示该字段可以是0到多个，packed=true 代表使用高效编码格式
 
 注意：
-- id在115之间编码只需要占一个字节，包括Filed数据类型和Filed对应数字id，在162047之间编码需要占两个字节，所以最常用的数据对应id要尽量小一些
+- id在1-15之间编码只需要占一个字节，包括Filed数据类型和Filed对应数字id
+- id在16-2047之间编码需要占两个字节，所以最常用的数据对应id要尽量小一些
 - 使用required规则的时候要谨慎，因为以后结构若发生更改，这个Filed若被删除的话将可能导致兼容性的问题。
 
 #### 2.2 默认值
@@ -57,7 +60,6 @@ message Person {
   optional string email = 3;
 
   enum PhoneType {
-    //allow_alias = true;
     MOBILE = 0;
     HOME = 1;
     WORK = 2;
@@ -169,5 +171,3 @@ message Test {
 如果用int32来保存一个负数，结果总是有10个字节长度，被看做是一个非常大的无符号整数。使用有符号类型会更高效。它使用一种ZigZag的方式进行编码。即-1编码成1，1编码成2，-2编码成3这种形式。  
 
 也就是说，对于sint32来说，n编码成 (n << 1) ^ (n >> 31)，注意到第二个移位是算法移位。  
-
-#### 3.3 定长编码

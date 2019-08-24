@@ -1,25 +1,23 @@
 ## 一 安装Go语言编译protobuf环境
 
-安装Go语言的proto API接口：
 ```
+# 安装Go语言的proto API接口：
 go get -v -u github.com/golang/protobuf/proto
-```
 
-安装protoc-gen-go插件：这是个go程序
-```
+# 安装protoc-gen-go插件：这是个go程序
 go get -v -u github.com/golang/protobuf/protoc-gen-go
 
-# 拷贝命令，开启go mod时，该命令位于 go/bin/
-cp protoc-gen-go /usr/local/bin/  
+# 开启go mod版本的golang：拷贝命令，该命令位于 go/bin/
+cp protoc-gen-go /usr/local/bin/ 
 
-# 贴士，低版本golang需要编译该源码为可执行文件，然后拷贝该文件
+# 低版本golang：需要编译该源码为可执行文件，然后拷贝该文件
 cd /gopath/github.com/golang/protobuf/protoc-gen-go/           
-go build        
+go build 
 ```
 
 ## 二 编译proto文件
 
-在项目根目录新建./protoes/hello.proto文件，内容如下：
+新建一个golang项目，项目根目录创建protoes/hello.proto文件，内容如下：
 ```
 syntax = "proto3";               
 
@@ -31,16 +29,16 @@ message HelloRequest {
 }
 ```
 
-编译：
+编译hello.proto：
 ```
 cd protoes
 protoc --go_out=./ *.proto      # 在当前目录生成了文件 hello.pb.go
 ```
 
-当用protocol buffer编译器来运行.proto文件时，编译器将生成所选择语言的代码，这些代码可以操作在.proto文件中定义的消息类型，包括获取、设置字段值，将消息序列化到一个输出流中，以及从一个输入流中解析消息：
-- 对C++来说，编译器会为每个.proto文件生成一个.h文件和一个.cc文件，.proto文件中的每一个消息有一个对应的 类。
-- 对Python来说，有点不太一样——Python编译器为.proto文件中的每个消息类型生成一个含有静态描述符的模 块，，该模块与一个元类(metaclass)在运行时(runtime)被用来创建所需的Python数据访问类。
-- 对go来说，编译器会为每个消息类型生成了一个.pd.go文件。  
+当用`protocol buffer`编译器来运行`.proto`文件时，编译器将生成所选择语言的代码，包括获取、设置字段值，将消息序列化到一个输出流中，以及从一个输入流中解析消息：
+- C++：编译器会为每个.proto文件生成一个.h文件和一个.cc文件，.proto文件中的每一个消息有一个对应的类
+- Python：.proto文件中的每个消息类型生成一个含有静态描述符的模块，该模块与一个元类(metaclass)在运行时被用来创建所需的Python数据访问类
+- Go：编译器会为每个消息类型生成了一个.pd.go文件
 
 hello.pb.go主要内容如下：
 ```go

@@ -1,6 +1,6 @@
 ## 一 Go 与 RPC
 
-Go标准包中已经提供了对RPC的支持，而且支持三个级别的RPC：TCP、HTTP、JSONRPC。但Go的RPC包是独一无二的RPC，它和传统的RPC系统不同，它只支持Go开发的服务器与客户端之间的交互，因为在内部，它们采用了Gob来编码。
+Go标准包中已经提供了对RPC的支持，而且支持三个级别的RPC：TCP、HTTP、JSONRPC。但Go的RPC它只支持Go开发的服务器与客户端之间的交互，因为在内部，它们采用了Gob来编码。
 
 Go RPC的函数只有符合下面的条件才能被远程访问，不然会被忽略，详细的要求如下：
 - 函数必须是导出的(首字母大写)
@@ -125,7 +125,7 @@ func main() {
 
 ## 三 TCP RPC
 
-上面我们实现了基于HTTP协议的RPC，接下来我们要实现基于TCP协议的RPC，服务端的实现代码如下所示：
+基于TCP协议的RPC，服务端的实现代码如下所示：
 
 ```Go
 
@@ -365,6 +365,4 @@ func main() {
 	fmt.Printf("Arith: %d/%d=%d remainder %d\n", args.A, args.B, quot.Quo, quot.Rem)
 
 }
-
-)
 ```
