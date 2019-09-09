@@ -1,58 +1,59 @@
-## 一 channel
+## 一 并发模型与channel 
 
-#### 1.0  channel的引出
+单纯的将函数并发执行是没有意义的，函数与函数之间必须能够交换数据才能体现并发执行函数的意义。为了实现数据的通信，有两种常见并发模型：
+- 共享数据：一般使用共享内存方式来共享数据，Go中的实现方式为互斥锁（sync包）。
+- 消息：消息机制认为每个并发单元都是独立个体，拥有自己的变量。不同的并发单元之间不共享各自的变量，只通过消息来进行数据输入输出，Go中的实现方式为channle。
 
-单纯的将函数并发执行是没有意义的，函数与函数之间必须能够交换数据才能体现并发执行函数的意义。虽然可以使用共享内存进行数据交换，但是共享内存在不同的goroutine中容易发生竞态问题，为了保证数据的正确性，必须使用互斥量对内存进行加锁，这种做法又肯定造成了性能问题。  
+在Go中对上述两种方式都进行了实现，但是Go不推荐共享数据方式，推荐channel的方式进行协程通信。因为多个 goroutine 为了争抢数据，容易发生竞态问题，会造成执行的低效率，使用队列的方式是最高效的， channel 就是一种队列一样的结构。  
 
-Go提倡使用通信的方式代替共享内存，即使用通道channel。  
-
-![](../images/Golang/channel-01.png)
-
-多个 goroutine 为了争抢数据，势必造成执行的低效率，使用队列的方式是最高效的， channel 就是一种队列一样的结构 。  
-
+如图所示：
+![](../images/go/02-04.svg)
+ 
 channel特性：
 - channel的本质是一个数据结构-队列，先进先出
 - channel是线程安全的，多goroutine访问时，不需要加锁，因为在任何时候，同时只能有一个goroutine访问通道。
 - channel拥有类型，一个string的channle只能存放string类型数据
 
-如图所示：
-![](../images/Golang/channel-02.png)
+## 二 channel的使用
 
-#### 1.1 channel的基本使用
+#### 2.1 channel的基本使用
 
-channel定义：
 ```go
-	//声明channel，此时没有初始化
-	var ch chan int
-	fmt.Printf("初始化前，ch=%v\n", ch)			// c1=<nil>
+package main
 
-	// 初始化channel,并给与长度,可以省略声明，直接书写：ci := make(chan int, 10)
-	ch = make(chan int)
-	fmt.Printf("初始化后，ch=%v\n", ch)			// c1=0xc000070060
+import "fmt"
 
-	// 开启协程向通道中填充数据
-	go func() {
-		ch <- 100										// 向c中存储一个数据100
-		fmt.Printf("入队后数据：%v\n",ch)			// 0xc000070060
-		ch <- 200
-		fmt.Printf("入队后数据：%v\n",ch)			// 0xc000074000
-		ch <- 300
-		fmt.Printf("入队后数据：%v\n",ch)			// 此处没有输出
-	}()
+func main(){
 
-	// main协程中 取出数据
-	data1 := <-ch
-	data2 := <-ch
-	fmt.Printf("取出的数据data1：%v\n", data1)	// 100
-	fmt.Printf("取出的数据data2：%v\n", data2)	// 200
+    var ch chan int             					// 声明一个channel，但未初始化，值为nil
+    ch = make(chan int)         					// 初始化，试吃ch有了地址
+
+    // 协程中向通道填充数据
+    go func() {
+        ch <- 100
+        fmt.Printf("入队后数据：%v\n",ch)			// 输出内存地址
+        ch <- 200
+        fmt.Printf("入队后数据：%v\n",ch)			// 输出内存地址
+        ch <- 300
+        fmt.Printf("入队后数据：%v\n",ch)			// 没有输出
+    }()
+
+    // 主协程中取出数据
+    data1 := <-ch
+    data2 := <-ch
+    fmt.Printf("取出的数据data1：%v\n", data1)		// 100
+    fmt.Printf("取出的数据data2：%v\n", data2)		// 200
+
+}
+
 ```
 
-channel内可以存储多种数据类型：
+注意：channel内可以存储多种数据类型，如下所示：
 ```go
 //初始化channel
 ci := make(chan int)
 cs := make(chan string)
-cf := make(chan interface{})				// 空接口通道，可以传送任意值
+cf := make(chan interface{})				
 ```
 
 #### 1.2 通道数据的接收
@@ -403,5 +404,3 @@ func main() {
 	time.Sleep(1 * time.Second)
 }
 ```
-
-
