@@ -9,120 +9,131 @@ import(
 )
 
 func helloworld(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, "hello world!")
+}
+
+func main() {
+
+	http.HandleFunc("/hello", helloworld)
+
+	server := http.Server{
+		Addr: ":8080",
+	}
+	server.ListenAndServe()
+
+}
+```
+
+访问：`localhost:8080/hello`，页面输出：`hello world!`
+
+## 二 常见功能
+
+#### 2.1 静态文件管理
+
+在helloworld项目的目录中创建文件夹`public`用于存放html静态文件：
+```go
+    files := http.FileServer(http.Dir("./public"))
+    http.Handle("/static/", http.StripPrefix("/static/", files)) 
+```
+
+注意：
+- 直接使用编辑器运行会造成路径不正确，应该先使用 `go build` 后，运行二进制文件。推荐使用绝对路径：`os.Executable()`获取绝对路径
+- 访问类似`http://localhost:8080/static/hello.html`网址，服务端会替换掉static为`public`路径
+
+#### 2.2 参数获取
+
+在helloword案例的整理目录结构如下：  
+
+![](../images/go/03-01.png)
+
+```go
+package main
+
+import(
+	"fmt"
+    "net/http"
+)
+
+func helloworld(w http.ResponseWriter, r *http.Request) {
+
+    // 默认不会解析，需要先解析表单
+    err := r.ParseForm()
+    if err != nil {
+        fmt.Println("参数解析出错：", err)
+        return
+    }
+	
+    fmt.Println("path", r.URL.Path)	    // 输出 /
+    fmt.Println(r.Form)                 // 输出 map[id:[4] name:[张三]]
+
 	fmt.Fprintf(w, "helloworld")
 }
 
 func main() {
 
-	server := http.Server{
+    http.HandleFunc("/hello", helloworld)
+    
+    files := http.FileServer(http.Dir("./public"))
+    http.Handle("/static/", http.StripPrefix("/static/", files))
+
+    server := http.Server{
 		Addr: ":8080",
-	}
-
-	http.HandleFunc("/", helloworld)
-
+    }
 	server.ListenAndServe()
 
 }
 ```
+GET和POST方式访问时，参数解析都会得到支持：
+- GET方式访问：访问地址为 `localhost:8080/?id=4&name=张三`
+- POST方式访问：在hello.html文件中加入如下ajax访问方式
+```js
+    <script src="../lib/jquery1.11.3.js"></script>
+    <script>
+        $.ajax({
+            type: "POST",
+            url: "/hello",
+            data: {
+                "id": 4,
+                "name": "张三",
+            },
+            success: function (data) {
+                console.log("data=",data);
+            },
+            error: function(err){
+                console.log("err=",err);
+            }
+        })
+    </script>
+```
 
-web开发涉及的流程（下一章将会介绍各个流程中的技术细节）：
-![](../images/Golang/web-01.png)
+#### 2.3 模板引擎
 
-## 二 常见功能
+笔者是坚定的前后端分离主义者，这里只是介绍go默认模板引擎的基本使用。   
 
-#### 2.1 参数获取
+在Go语言中，使用`template`包来进行模板处理，使用类似`Parse`、`ParseFile`、`Execute`等方法从文件或者字符串加载模板。  
 
-在helloword案例中，对句柄函数做出如下修改，并访问：`localhost:8080/?id=3&name=zs`
+在上述helloworld案例的main函数中添加一个处理函数：
 ```go
-func helloworld(w http.ResponseWriter, r *http.Request) {
-
-	// 默认不解析参数，所以这里必须设置
-	parseErr := r.ParseForm()					
-	if parseErr != nil {
-		fmt.Println("参数解析错误：", parseErr)
-		return
-	}
-
-	fmt.Println(r.Form)							// map[id:[3] name:[zs]]
-	fmt.Println("path", r.URL.Path)				// /
-	fmt.Println("scheme", r.URL.Scheme)			// scheme
-	fmt.Println(r.Form["id"])					// [3]
-
-	for k, v := range r.Form {
-		fmt.Println("key:", k)
-		fmt.Println("val:", strings.Join(v, ""))
-	}
-
-	_, fpError := fmt.Fprintf(w, "hellow world") 	//写入到客户端的信息
-	if fpError != nil {
-		fmt.Println("打印错误：", fpError)
-	}
-}
+	http.HandleFunc("/testTemplate", testTemplate)
 ```
-
-#### 2.2 路由与静态文件管理
-
-虽然使用Go开发的web应用大多已经处于前后端分离的模式，这里还是需要提及一下静态文件的管理：
+处理函数为：
 ```go
-	// 创建一个Go默认的路由
-	mux := http.NewServeMux()
-	// 静态文件管理：注意生成二进制文件时，public的路径，推荐使用绝对路径
-	files := http.FileServer(http.Dir("./public"))
-	mux.Handle("/static/", http.StripPrefix("/static/", files))
-	mux.HandleFunc("/hello", func(w http.ResponseWriter, r *http.Request){
-		fmt.Fprintf(w, "hello world")
-	})
-	server := &http.Server{
-		Addr: "localhost:8080",
-		Handler: mux,
-	}
-	server.ListenAndServe()
+    // 解析模板文件
+    t, _ := template.ParseFiles("./views/test.html")
+    // 声明一个字符串切片
+    stars := []string{"马蓉", "李小璐", "白百何"}
+    // 执行模板
+    t.Execute(w, stars)
 ```
-
-在本案例中，使用`http.FileServer(http.Dir("./public"))`创建了一个文件服务器，当访问地址以`/static/`开头时，路由器mux将移除该字符串，并在public目录中查找被请求的文件，如下所示：
-```
-# 访问地址
-http://localhost:8080/static/html/hello.html
-# 查找的文件为 public目录中
-/html/hello.html
-```
-
-#### 2.3 路由串联
-
-很多场景中，路由的处理函数在执行前，要先进行一些校验，比如安全检查，错误处理等等，这些行为需要在路由处理函数执行前有限执行。 
-
-```go
-package main
-
-
-import(
-	"fmt"
-	"net/http"
-)
-
-func before(handle http.HandlerFunc) http.HandlerFunc {
-	return func(w http.ResponseWriter, r * http.Request) {
-		fmt.Println("执行前置处理")
-		handle(w, r)
-	}
-}
-
-func test(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "test1")
-}
-
-
-func main() {
-
-	server := http.Server{
-		Addr: "127.0.0.1:8080",
-	}
-
-	http.HandleFunc("/test", before(test))
-
-	server.ListenAndServe()
-
-}
-
+创建一个模板文件`views/test.html`：
+```html
+<body>
+     <!-- 嵌入动作 -->
+     {{range .}}
+     <a href="#">{{.}}</a>
+    {{else}}
+     没有遍历到任何内容
+    {{end}}  
+</body>
 ```
 
