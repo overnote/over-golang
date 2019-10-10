@@ -6,30 +6,22 @@
 
 基于Go的算法笔记一样在小伙伴们的计划之列，不过算法过于庞大，被独立放置在了[overnote](https://github.com/overnote/algorithm)系列中自成一系。  
 
-TODO列表：
-- 别字、样式校验：2019/09-2019/10
-- web开发详细深入：2019/08-2019/10
-- web相关框架详细深入：2019/08-2019/10
-- 微服务相关框架深入：2019/08-2019/11
-- go源码解析：2019/09-2019/12
-- go标准库：已有相关仓库做的很好，暂未考虑该章节  
-
 笔记适用场合：笔记的目的是以简化繁作为手册查询，适合已经完成go的初级学习，用于记录/整理各大知识点，并深入学习go语言。
 
 ## 二 Go学习路径图
 
-![](./images/Golang/golang-developer-roadmap-zh-CN.png) 
+![](./images/go/golang-developer-roadmap-zh-CN.png) 
 
 ## 三 Go相关书籍、资料整理
 
 #### 3.1 书籍
 
 - [《Go语言从入门到进阶实战》](https://book.douban.com/subject/30240200/)：语法基础，入门力荐，但此书比较冷门
-- [《Go程序设计语言》](https://book.douban.com/subject/27044219/)：Go语言圣经，[查看中译资料](https://github.com/gopl-zh/gopl-zh.github.com)
+- [《Go程序设计语言》](https://book.douban.com/subject/27044219/)：Go语言圣经，[中译资料](https://github.com/gopl-zh/gopl-zh.github.com)
 - [《GoWeb编程》](https://book.douban.com/subject/27204133/)：Go语言Web编程基础
 - [《Go并发编程实战》](https://book.douban.com/subject/27016236/)：解读go并发原理，但语言组织欠佳（若修正语言组织问题，将会是上乘佳作）
 - [《Go语言学习笔记》](https://book.douban.com/subject/26832468/)：言简意赅，深入浅出，力荐
-- [《Go语言高级编程》](https://book.douban.com/subject/34442131/)：深入理解Go必备，[查看开源文档](https://github.com/chai2010/advanced-go-programming-book)
+- [《Go语言高级编程》](https://book.douban.com/subject/34442131/)：深入理解Go必备，[开源文档](https://github.com/chai2010/advanced-go-programming-book)
 
 #### 3.2 资料
 
