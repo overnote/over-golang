@@ -14,35 +14,27 @@ Go Micro核心特性：
 
 ## 二 micro安装  
 
-安装依赖：
+micro安装步骤：
 ```
-# consul下载 https://www.consul.io/downloads.html
-consul agent -dev   # 开启consul监听即可
-
-# protobuf下载
+# 安装依赖插件 protobuf
 go get -u github.com/golang/protobuf/{proto,protoc-gen-go}
 go get -u github.com/micro/protoc-gen-micro
-```
 
-安装 go micro：
-```
-go get -u github.com/micro/micro
-cd $GOPATH/src/github.com/micro/micro
-go build   -o micro  main.go
-cp micro /usr/local/bin/
-```
+# 安装 micro库，该库用于生成micro命令，micro命令可以用来快速生成基于go-micro的项目：
+go get -u -v github.com/micro/micro
+cd $GOPATH
+go install github.com/micro/micro                    
 
-测试：
-```
+# 测试
 micro
 ```
 
 ##  二 helloworld
 
 ```
-micro new ~/helloworld
-cd ~/hellloworld
-protoc --proto_path=. --micro_out=. --go_out=. proto/example/example.proto
+micro new helloworld                # 在$GOPATH的src下创建一个名为helloworld的项目
+cd $GOPATH/src/hellloworld
+protoc --proto_path=. --micro_out=. --go_out=. proto/helloworld/helloworld.proto
 go run main.go
 ```
 
@@ -50,14 +42,27 @@ go run main.go
 
 创建微服务命令：
 ```
-micro new   # 创建 通过指定相对于$GOPATH的目录路径，创建一个新的微服务。
+micro new   # 相对于$GOPATH创建一个新的微服务
             # 参数 --namespace "test"   服务的命名空间
-            # 参数 --type "srv"         服务类型，常用的有 web srv api
-            # 参数 --fqdn               FQDN of service e.g com.example.srv.service (defaults tonamespace.type.alias)
+            # 参数 --type "srv"         服务类型，常用的有 srv api web fnc
+            # 参数 --fqdn               服务正式的全定义
             # 参数 --alias              别名是在指定时作为组合名的一部分使用的短名称
 
 micro run   # 运行这个微服务
 ```
+## 四 跑通微服务项目
+
+#### 4.1 创建两个服务
+
+
+#### 4.2 启动consul
+
+
+
+
+
+
+
 
 
 
