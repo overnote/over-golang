@@ -1,36 +1,23 @@
-## 一 consul介绍 
+## 一 consul概述
 
 #### 1.1 consul简介
 
-Consul是HashiCorp公司推出的开源工具，用于实现分布式系统的服务发现与配置。 Consul是分布式、高可用、可横向扩展的。  
-
-它具备以下特性：
-- 服务发现（service discovery）：consul通过DNS或者HTTP接口使服务注册和服务发现变的很容易，一些外部服务，例如saas提供的也可以一样注册。
-- 健康检查（health checking）：健康检测使consul可以快速的对集群中的操作发出警报。和服务发现的集成，可以防止服务转发到 故障的服务上面。
+consul由HashiCorp公司开源，可用于实现分布式系统的服务发现与配置，具备特性有：
 - 键值存储（key/value storage）：consul有一个用来存储动态配置的系统，并提供了简单的HTTP接口来操作
-- 多数据中心（multi-datacenter）：无需复杂的配置，即可支持任意数量的数据区域。  
+- 服务发现（service discovery）：consul的客户端可以提供一个服务，另外的客户端可以使用consul发现一个指定服务的提供者，consul通过DNS或者HTTP接口使服务注册和服务发现变的很容易，且可以注册外部服务
+- 健康检查（health checking）：consul的健康检查可以快速对集群中的操作发出警报，以防止服务转发到故障服务上
+- 多数据中心（multi-datacenter）：无需复杂的配置，即可支持任意数量的数据区域。 
 
-Consul是强一致性的数据存储，使用gossip形成动态集群。它提供分级键/值存储方式，不仅可以存储数据，而且可以用于注册器件事各种任务，从发送数据改变通知到运行健康检查和自定义命令，具体如何取决于它们的输出。  
-
-与Zookeeper和etcd不一样，Consul内嵌实现了服务发现系统，所以这样就不需要构建自己的系统或使用第三方系统。这一发现系统除了上述提到的特性之外，还包括节点健康检查和运行在其上的服务。  
-
-Zookeeper和etcd只提供原始的键/值队存储，要求应用程序开发人员构建他们自己的系统提供服务发现功能。而Consul提供了一个内置的服务发现的框架。客户只需要注册服务并通过DNS或HTTP接口执行服务发现。其他两个工具需要一个亲手制作的解决方案或借助于第三方工具。  
-
-Consul为多种数据中心提供了开箱即用的原生支持，其中的gossip系统不仅可以工作在同一集群内部的各个节点，而且还可以跨数据中心工作。  
-
-Consul还有另一个不错的区别于其他工具的功能，它不仅可以用来发现已部署的服务以及其驻留的节点信息，还通过HTTP请求、TTLs（time-to-live）和自定义命令提供了易于扩展的健康检查特性。  
+consul是强一致性的数据存储，且内嵌了服务发现系统（etc没有，只是一个键值存储），consul为多种数据中心提供了开箱即用的原生支持，其中的gossip系统不仅可以工作在同一集群内部的各个节点，而且还可以跨数据中心工作。
 
 #### 1.2 consul应用场景
 
-consul的三个主要应用场景：服务发现、服务隔离、服务配置。  
+consul的三个主要应用场景：
+- 服务发现：consul作为注册中心，服务地址被注册到consul中以后，可以使用consul提供的dns、http接口查询、健康检查health check。
+- 服务隔离：consul支持以服务为单位设置访问策略，能同时支持经典的平台和新兴的平台，支持tls证书分发，service-to-service加密。   
+- 服务配置：consul提供key-value数据存储功能，并且能将变动迅速地通知出去，通过工具consul-template可以更方便地实时渲染配置文件。 
 
-服务发现场景中，consul作为注册中心，服务地址被注册到consul中以后，可以使用consul提供的dns、http接口查询，consul支持health check。   
-
-服务隔离场景中，consul支持以服务为单位设置访问策略，能同时支持经典的平台和新兴的平台，支持tls证书分发，service-to-service加密。   
-
-服务配置场景中，consul提供key-value数据存储功能，并且能将变动迅速地通知出去，通过工具consul-template可以更方便地实时渲染配置文件。   
-
-可以通过Introduction to Consul了解consul的一些技术细节: 
+技术细节: 
 ```
 每个被注册到consul中的node上，都部署一个consul agent，这个agent负责对本地的服务进行监控检查，以及将查询请求转发给consul server。
 consul server负责存放、备份数据(使用raft协议保证一致性)，通常要有多台形成集群，选举出一个leader。
@@ -47,10 +34,7 @@ consul server负责存放、备份数据(使用raft协议保证一致性)，通�
 
 下载地址：https://www.consul.io/downloads.html
 
-mac和linux版只需要将二进制文件移动到 `/usr/local/bin`目录中即可，测试安装结果：
-```
-consul
-```
+mac和linux版只需要将二进制文件移动到 `/usr/local/bin`目录中即可，测试安装命令`consul`。
 
 consul提供了开发模式用于启动单节点服务，用于开发调试：
 ```
@@ -60,138 +44,25 @@ consul agent -dev
 http://127.0.0.1:8500/ui/dc1/nodes
 ```
 
-## 三 常用命令
+## 三 consul架构
 
-查看consul组成服务的node：
-```
-consul catalog nodes
+consul是典型的 C/S 架构，其集群由 N 个 Server 与 M 个 Client 组成的。他们都是consul的一个节点，所有的服务都可以注册到这些节点上，正是通过这些节点实现服务注册信息的共享。 
 
-# 查询结果
-Node       ID        Address    DC
-*******  e8c9f98c  127.0.0.1    dc1
-```
+consul必须运行agent，agent可以运行为server或client模式：
+- client: consul的client模式，是一个无状态客户端，用来将 HTTP 和 DNS 接口请求转发给局域网内的服务端集群，即 所有注册到当前节点的服务会被转发到 Server，本身不持久化这些信息
+- server: consul的server模式，是一个高可用集群，功能和client一样，但是会会把所有的信息持久化的本地，可以用来保存配置信息，在局域网内与本地客户端通讯，通过广域网与其他数据中心通讯。
 
-还可以通过dns查询成员node地址，默认后缀是node.consul：
-```
-dig @127.0.0.1 -p 8600 127-0-0-1.node.consul
-```
+每个数据中心至少必须拥有一台server，建议在一个集群中有3或者5个server，部署单一的server，在出现失败时会不可避免的造成数据丢失。其他的agent运行为client模式，一个client是一个非常轻量级的进程，用于注册服务。  
 
-要注册的服务可以直接做成本地配置文件：
-```
-sudo mkdir /etc/consul.d
-echo '{"service": {"name": "web", "tags": ["rails"], "port": 80}}'  | sudo tee /etc/consul.d/web.json
-```
+ServerLeader 表明这个 Server 是它们的老大，它需要负责同步注册的信息给其它的 Server ，同时也要负责各个节点的健康监测。  
 
-或者通过api注册，api是：agent/service：
-```
-cat web2.json
-{
-    "Name": "web2",
-    "Tags": [
-        "rails"
-    ],
-    "Address": "",
-    "Port": 81,
-    "ServiceEnableTagOverride": false
-}
+consul可以用来实现分布式系统的服务发现与配置：
+- client把服务请求传递给server
+- server负责提供服务以及和 其他数据中心交互。
 
-curl --request PUT --data @web2.json  http://127.0.0.1:8500/v1/agent/service/register
-```
+既然server端提供了所有服务，那为何还需要多此一举地用client端来接收一次服务请求？  
 
-查询所有服务：
-```
-consul catalog services
-```
+首先：server端的网络连接资源有限。分布式系统的访问量一般很大，如果没有client，数据中心需要为每个用户提供一个单独的连接资源（线程、端口号等），那么server端压力会极大。利用client，可以整合用户的服务请求，然后通过一个单一的链接一次性发送给server端，以减少server端的负担。  
+其次：client端也可以对用户的请求进行一些处理，比如缓存相同请求的响应内容。  
+最后：依赖于这种cs架构，consul只要接入一个client就能将自己注册到一个服务网络当中，系统的可扩展性非常更强
 
-dns查询指定服务地址，默认后缀为service.consul
-```
-dig @127.0.0.1 -p 8600 web.service.consul srv
-```
-
-http api查询：
-```
-curl http://127.0.0.1:8500/v1/catalog/service/web |python -m json.tool
-```
-
-## 四 Connect配置
-
-Connect是consul的重要特性，简单说就是，consul可以为服务配置访问代理，并且负责中间的认证和加密。  
-
-在本地启动一个echo服务：
-```
-yum install -y socat
-socat -v tcp-l:8181,fork exec:"/bin/cat"
-```
-
-注册到consul中，注意connect字段不为空，表示consul需要为socat服务准备代理:
-```
-cat <<EOF | sudo tee /etc/consul.d/socat.json
-{
-  "service": {
-    "name": "socat",
-    "port": 8181,
-    "connect": { "proxy": {} }
-  }
-}
-EOF
-```
-
-重启consul，或者给consul发送SIGHUB信号，重新加载配置。  
-
-用下面的命令，手动在本地启动一个proxy：
-```
-consul connect proxy -service web -upstream socat:9191
-```
-
-然后就可以通过9191端口访问8181端口的服务：
-```
-nc 127.0.0.1 9191
-helo
-```
-
-操作到这里的时候报错，通过9191无法联通，consul日志显示：
-```
-[WARN] agent: Check "service:socat-proxy" socket connection failed
-```
-
-## 五 key操作
-
-写入一个名为”k1”的key，value为”hello”：
-```
-curl -X PUT --data "hello" 127.0.0.1:8500/v1/kv/k1
-```
-
-读取：
-```
-curl 127.0.0.1:8500/v1/kv/k1
-```
-
-key的读取接口支持6个参数：
-```
-key (string: "")         - Specifies the path of the key to read.
-dc (string: "")          - Specifies the datacenter to query. 
-                           This will default to the datacenter of the agent being queried. 
-                           This is specified as part of the URL as a query parameter.
-recurse (bool: false)    - Specifies if the lookup should be recursive and key treated as a prefix instead of a literal match. 
-                           This is specified as part of the URL as a query parameter.
-raw (bool: false)        - Specifies the response is just the raw value of the key, without any encoding or metadata. 
-                           This is specified as part of the URL as a query parameter.
-keys (bool: false)       - Specifies to return only keys (no values or metadata). Specifying this implies recurse. 
-                           This is specified as part of the URL as a query parameter.
-separator (string: '/')  - Specifies the character to use as a separator for recursive lookups. 
-                           This is specified as part of the URL as a query parameter.
-```
-
-例如查看指定路径下的所有key：
-```
-curl 127.0.0.1:8500/v1/kv/k1?keys
-[
-    "k1",
-    "k1/k11"
-]
-```
-
-删除key：
-```
-curl -X DELETE 127.0.0.1:8500/v1/kv/k1
-```
