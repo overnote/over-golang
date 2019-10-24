@@ -14,35 +14,27 @@ Go Micro核心特性：
 
 ## 二 micro安装  
 
-安装依赖：
+micro安装步骤：
 ```
-# consul下载 https://www.consul.io/downloads.html
-consul agent -dev   # 开启consul监听即可
-
-# protobuf下载
+# 安装依赖插件 protobuf
 go get -u github.com/golang/protobuf/{proto,protoc-gen-go}
 go get -u github.com/micro/protoc-gen-micro
-```
 
-安装 go micro：
-```
-go get -u github.com/micro/micro
-cd $GOPATH/src/github.com/micro/micro
-go build   -o micro  main.go
-cp micro /usr/local/bin/
-```
+# 安装 micro库，该库用于生成micro命令，micro命令可以用来快速生成基于go-micro的项目：
+go get -u -v github.com/micro/micro
+cd $GOPATH
+go install github.com/micro/micro                    
 
-测试：
-```
+# 测试
 micro
 ```
 
 ##  二 helloworld
 
 ```
-micro new ~/helloworld
-cd ~/hellloworld
-protoc --proto_path=. --micro_out=. --go_out=. proto/example/example.proto
+micro new helloworld                # 在$GOPATH的src下创建一个名为helloworld的项目
+cd $GOPATH/src/hellloworld
+protoc --proto_path=. --micro_out=. --go_out=. proto/helloworld/helloworld.proto
 go run main.go
 ```
 
@@ -50,14 +42,140 @@ go run main.go
 
 创建微服务命令：
 ```
-micro new   # 创建 通过指定相对于$GOPATH的目录路径，创建一个新的微服务。
+micro new   # 相对于$GOPATH创建一个新的微服务
             # 参数 --namespace "test"   服务的命名空间
-            # 参数 --type "srv"         服务类型，常用的有 web srv api
-            # 参数 --fqdn               FQDN of service e.g com.example.srv.service (defaults tonamespace.type.alias)
+            # 参数 --type "srv"         服务类型，常用的有 srv api web fnc
+            # 参数 --fqdn               服务正式的全定义
             # 参数 --alias              别名是在指定时作为组合名的一部分使用的短名称
 
 micro run   # 运行这个微服务
 ```
 
+注意：new默认创建的项目是以rpc为基础构建的，如果要使用grpc则看下一章！
 
+## 四 跑通微服务项目
 
+#### 4.1 创建两个服务
+
+创建第一个服务mysrv：
+```
+micro new --type "srv" test/mysrv
+cd $GOPATH/src/test/mysrv
+protoc --proto_path=.:$GOPATH/src --go_out=. --micro_out=. proto/mysrv/mysrv.proto
+```
+
+创建第二个服务myweb：
+```
+micro new --type "web" test/myweb
+```
+
+启动consul监控：
+```
+consul agent -dev
+
+# consul默认地址：http://127.0.0.1:8500
+```
+
+#### 4.2 联通两个服务
+
+修改mysrv服务的main.go文件：
+```go
+	service := micro.NewService(
+		micro.Name("go.micro.srv.mysrv"),
+		micro.Version("latest"),
+		micro.Address("3000"),
+	)
+```
+
+修改myweb服务的main.go文件：
+```go
+package main
+
+import (
+	"net/http"
+
+	"github.com/micro/go-micro/util/log"
+
+	"test/rpc/myweb/handler"
+
+	"github.com/micro/go-micro/web"
+)
+
+func main() {
+
+	// create new web service
+	service := web.NewService(
+		web.Name("go.micro.web.myweb"),
+		web.Version("latest"),
+		web.Address(":8080"),                   // 添加一个端口
+	)
+
+	// initialise service
+	if err := service.Init(); err != nil {
+		log.Fatal(err)
+	}
+
+	// register html handler
+	service.Handle("/", http.FileServer(http.Dir("html")))
+
+	// register call handler
+	service.HandleFunc("/mysrv/call", handler.MysrvCall)            // 修改调用服务名称
+
+	// run service
+	if err := service.Run(); err != nil {
+		log.Fatal(err)
+	}
+}
+
+```
+
+修改myweb服务的handler.go文件：
+```go
+package handler
+
+import (
+	"context"
+	"encoding/json"
+	"net/http"
+	"time"
+
+	mysrv "test/myweb/proto/mysrv" // 修改服务提供者的proto
+
+	"github.com/micro/go-micro/client"
+)
+
+func MysrvCall(w http.ResponseWriter, r *http.Request) {
+
+	// decode the incoming request as json
+	var request map[string]interface{}
+	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
+		http.Error(w, err.Error(), 500)
+		return
+	}
+
+	// 修改调用名称
+	mysrvClient := mysrv.NewMysrvService("go.micro.srv.mysrv", client.DefaultClient)
+	rsp, err := mysrvClient.Call(context.TODO(), &mysrv.Request{
+		Name: request["name"].(string),
+	})
+	if err != nil {
+		http.Error(w, err.Error(), 500)
+		return
+	}
+
+	// we want to augment the response
+	response := map[string]interface{}{
+		"msg": rsp.Msg,
+		"ref": time.Now().UnixNano(),
+	}
+
+	// encode and write the response as json
+	if err := json.NewEncoder(w).Encode(response); err != nil {
+		http.Error(w, err.Error(), 500)
+		return
+	}
+}
+
+```
+
+修改html文件中的请求地址为：`/mysrv/call`，然后分别启动上述两个服务，访问：localhost:8080

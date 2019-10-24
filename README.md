@@ -45,7 +45,6 @@
 - [数据结构与算法](https://github.com/overnote/over-algorithm)：以C/Go实现为主记录数据结构与算法的笔记
 - [分布式与微服务架构](https://github.com/overnote/over-architecture/)：分布式与微服务等架构相关笔记
 - [Linux](https://github.com/overnote/over-linux)：计算机组成原理、操作系统、计算机网络、编译原理基础学科笔记
-- [服务端常用技术](https://github.com/overnote/server-sider)：nginx、mysql、redis、mongodb、linux系统基础等服务端常用技术汇总笔记
+- [服务端常用技术](https://github.com/overnote/server-side)：nginx、mysql、redis、mongodb、linux系统基础等服务端常用技术汇总笔记
 - [大数据](https://github.com/overnote/over-bigdata)：大数据笔记，完善中
 - [Python](https://github.com/overnote/over-python)：Python相关笔记，完善中
-- [Java](https://github.com/overnote/over-java)：Java相关笔记，完善中
