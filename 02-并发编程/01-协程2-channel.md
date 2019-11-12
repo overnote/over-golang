@@ -26,7 +26,7 @@ import "fmt"
 func main(){
 
     var ch chan int             					// 声明一个channel，但未初始化，值为nil
-    ch = make(chan int)         					// 初始化，试吃ch有了地址
+    ch = make(chan int)         					// 初始化，此时ch有了地址
 
     // 协程中向通道填充数据
     go func() {
@@ -140,7 +140,7 @@ all done..
 贴士：在上述案例中，因为使用了缓冲通道。即便没有 goroutine 接收，发送者也不会发生阻塞。
 
 注意区分通道的容量与长度：
-- 容量：cap(ch)，即通道声明时设置可溶两大小。
+- 容量：cap(ch)，即通道声明时设置的容量大小。
 - 长度：len(ch)，即通道中实际存储的数据多少。
 
 带缓冲通道发生阻塞条件：
@@ -238,7 +238,7 @@ func main() {
 	ch := make(chan string, 5)
 
 	// 开启100个协程
-	for i: = 0; i < 100; i++ {
+	for i := 0; i < 100; i++ {
 		go timeMore(ch)
 	}
 
