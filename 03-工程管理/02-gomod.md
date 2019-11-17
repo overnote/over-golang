@@ -1,57 +1,4 @@
-## 一 包
-
-#### 1.1 package与import
-
-在实际的开发中，我们往往需要在不同的文件中，去调用其它文件的定义的函数，比如 main.go 中，需要使用"fmt"包中的Println()函数：
-```go
-package main
-import "fmt"
-```
-
-在Go中，Go的每一个文件都是属于一个包的，也就是说Go是以包的形式来管理文件和项目目录结构。所以如果要导入某些第三方包，直接输入包所在地址即可。文件的包名通常和文件所在的文件夹名一致，一般为小写字母。
-
-```
-引入方式 1:import "包名"
-引入方式 2:
-import (
-	"包名"
-	"包名" 
-)
-```
-- package 指令在 文件第一行，然后是 import 指令
-- 在 import 包时，路径从 $GOPATH 的 src 下开始，不用带 src , 编译器会自动从 src 下开始引入
-- 为了让其它包的文件，可以访问到本包的函数，则该函数名的首字母需要大写，类似其它语言 的 public ,这样才能跨包访问
-- 在访问其它包函数，变量时，其语法是 `包名.函数名`
-
-#### 1.2 GOPATH
-
-GOPATH与GROOT：
-```
-GOROOT: Go的安装目录，比如c:/Go
-GOPATH: Go的项目目录
-```
-
-GoPath目录用来存放代码文件、可运行文件、编译后的包文件。 1.1-1.7版本必须设置，而且不能和Go的安装目录一样，1.8版本后会有默认值： 
-```
-Unix:$HOME/go
-Windows:%USERPROFILE%/go。
-```  
-
-GOPATH允许多个目录，多个目录的时候Windows是分号，Linux系统是冒号隔开。当有多个GOPATH时，默认会将go get的内容放在第一个目录下，$GOPATH 目录约定有三个子目录：
-- src:存放源代码，一般一个项目分配一个子目录;
-- pkg:编译后生成的文件，如.a文件
-- bin:编译后生成的可执行文件,可以加入$PATH中
->注意：一般建议package的名称和目录名保持一致
-
-#### 1.3 包中的函数调用方式
-
-函数调用的方式：
-- 同包下：直接调用即可
-- 不同包下：包名.函数名
-
-注意：Go中，大写字母开头的变量是可导出的，也就是其它包可以读取的，是公有变量；小写字母开头的就是不可导出的，是私有变量。
-
-## 二 go mod
+## 一 go mod
 
 go的项目依赖管理一直饱受诟病，在go1.11后正式引入了`go modules`功能，在go1.13版本中将会默认启用。从此可以不再依赖gopath，摆脱gopath的噩梦。  
 
@@ -102,9 +49,9 @@ export PATH=$PATH:$GOPATH/bin               # go第三方二进制文件的环�
 
 注意：使用了go mod后，go get安装的包不再位于$GOPATHA/src 而是位于  $GOPATH/pkg/mod
 
-## 三 翻墙问题解决
+## 二 翻墙问题解决
 
-#### 3.1 推荐方式 GOPROXY
+#### 2.1 推荐方式 GOPROXY
 
 从 Go 1.11 版本开始，还新增了 GOPROXY 环境变量，如果设置了该变量，下载源代码时将会通过这个环境变量设置的代理地址，而不再是以前的直接从代码库下载。goproxy.io 这个开源项目帮我们实现好了我们想要的。该项目允许开发者一键构建自己的 GOPROXY 代理服务。同时，也提供了公用的代理服务 https://goproxy.io，我们只需设置该环境变量即可正常下载被墙的源码包了：
 
@@ -121,7 +68,7 @@ $env:GOPROXY = "https://goproxy.io"
 export GOPROXY=
 ```
 
-#### 3.2 replace方式
+#### 2.2 replace方式
 
 `go modules`还提供了 replace，可以解决包的别名问题，也能替我们解决 golang.org/x 无法下载的的问题。
 
@@ -139,7 +86,7 @@ replace (
 )
 ```
 
-#### 3.3 手动下载 旧版go的解决
+#### 2.3 手动下载 旧版go的解决
 
 我们常见的 golang.org/x/... 包，一般在 GitHub 上都有官方的镜像仓库对应。比如 golang.org/x/text 对应 github.com/golang/text。所以，我们可以手动下载或 clone 对应的 GitHub 仓库到指定的目录下。
 
@@ -149,7 +96,7 @@ git clone git@github.com:golang/text.git
 rm -rf text/.git
 当如果需要指定版本的时候，该方法就无解了，因为 GitHub 上的镜像仓库多数都没有 tag。并且，手动嘛，程序员怎么能干呢，尤其是依赖的依赖，太多了。
 
-## 四 go mod引起的变化
+## 三 go mod引起的变化
 
 引包方式变化：
 - 不使用go mod 引包："./test"  引入test文件夹
