@@ -20,7 +20,7 @@ gRPC默认使用protoBuf，这是 Google 开源的一套成熟的结构数据序
 
 #### 2.0 项目结构
 
-![](../images/Golang/rpc-02.png)
+![](../images/go/rpc-02.png)
 
 #### 2.1 设置proto文件
 
