@@ -29,77 +29,116 @@ Go中提供了`ParseIP(s string) IP`函数会把一个IPv4或者IPv6的地址转
 #### 1.1 服务端代码
 
 ```go
+package main
 
-//服务端处理从客户端接受的数据
-func handleConnection(c net.Conn) {
-	defer c.Close() //关闭conn
-
-	for {
-
-		//1. 等待客户端通过conn发送信息
-		//2. 如果客户端没有wrtie[发送]，那么协程就阻塞在这里
-		fmt.Printf("服务器在等待客户端%s 发送信息\n", c.RemoteAddr().String())
-		buf := make([]byte, 1024)
-		n, err := c.Read(buf)
-		if err != nil {
-			log.Fatal(err)
-			break
-		}
-
-		//3. 显示客户端发送的内容到服务器的终端
-		fmt.Print(string(buf[:n]))
-	}
-}
+import (
+	"fmt"
+	"net"
+	"strings"
+)
 
 func main() {
-	l, err := net.Listen("tcp", "localhost:8888")
+
+	// Unix网络编程步骤：Server->Bind->Listen->Accept
+	// go语言socket简化为了：Listen->Accept
+
+	// 1 监听端口
+	server, err := net.Listen("tcp", "127.0.0.1:3000")
+	defer server.Close()
 	if err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
-	defer l.Close()
-	for { //循环等待客户端访问
-		conn, err := l.Accept()
+	fmt.Println("tcp server is on 3000")
+
+	// 2 监听客户端消息
+	for {
+		conn, err := server.Accept()
 		if err != nil {
-			log.Fatal(err)
+			fmt.Println("server accept err：", err)
+			break
 		}
-		fmt.Printf("访问客户端信息： con=%v 客户端ip=%v\n", conn, conn.RemoteAddr().String())
-
-		go handleConnection(conn)
-
+		msgHandler(conn)
 	}
 }
 
+func msgHandler(conn net.Conn) {
+
+	// 新建数据流存储结构
+	buf := make([]byte, 1024)
+
+	// 循环读取网络数据流
+	for {
+		n, err := conn.Read(buf)			// 网络数据流写入buffer
+		if err != nil {
+			panic(err)
+		}
+
+		// 业务逻辑
+		msg := strings.TrimSpace(string(buf[0:n]))		// 去除两端空格
+
+		if msg != "bye" {
+			conn.Write([]byte("server receive " + msg))
+		} else {
+			conn.Write([]byte("bye bye"))
+			break
+		}
+	}
+}
 ```
 
 #### 1.2 Go的TCP客户端案例
 ```go
+package main
+
+import (
+	"bufio"
+	"fmt"
+	"net"
+	"os"
+	"strings"
+)
+
 func main() {
-	conn, err := net.Dial("tcp", "localhost:8888")
+
+	// 客户端连接
+	conn, err := net.Dial("tcp", "127.0.0.1:3000")
+	defer conn.Close()
 	if err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
 
-	//客户端可以发送单行数据，然后就退出
-	reader := bufio.NewReader(os.Stdin) //os.Stdin 代表标准输入[终端]
-	for {
-		//从终端读取一行用户输入，并准备发送给服务器
-		line, err := reader.ReadString('\n')
-		if err != nil {
-			log.Fatal(err)
-		}
-		line = strings.Trim(line, "\r\n")
+	// 返回一个拥有size的reader，接收客户端输入
+	reader := bufio.NewReader(os.Stdin)
+	buf := make([]byte, 1024)				// 缓存conn中的数据
 
-		if line == "exit" {
-			fmt.Println("用户退出客户端")
+	for {
+		// 客户端输入
+		input, _ := reader.ReadString('\n')
+		input = strings.TrimSpace(input)	// 去除两端空格
+		if input == "" {
+			continue
+		}
+
+		// 客户端数据写入conn
+		conn.Write([]byte(input))
+
+		// 服务端返回数据写入空buf
+		n, err := conn.Read(buf)
+		if err != nil {
+			fmt.Println("client read err:", err)
+			continue
+		}
+
+		msg :=  string(buf[0:n])
+		// 回显数据
+		if msg == "bye" {
 			break
 		}
-		//再将line 发送给 服务器
-		conent, err := conn.Write([]byte(line + "\n"))
-		if err != nil {
-			log.Fatal(err)
-		}
-		fmt.Printf("客户端发送了 %d 字节的数据到服务端\n", conent)
+		fmt.Println("response: ", msg)
+
 	}
+	fmt.Println("over")
+
 }
 ```
 
