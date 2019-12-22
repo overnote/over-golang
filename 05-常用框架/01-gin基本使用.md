@@ -2,13 +2,7 @@
 
 #### 1.1 helloworld
 
-gin框架中的路由是基于httprouter开发的。  
-
-httprouter地址：https://github.com/julienschmidt/httprouter
-
-gin提供了Martini风格API，但是速度比Martini快40倍，使用起来也非常轻量、方便、简洁。  
-
-HelloWorld：
+gin框架中的路由是基于[httprouter](https://github.com/julienschmidt/httprouter)开发的。HelloWorld：
 ```go
 package main
 
@@ -60,7 +54,7 @@ name := c.PostForm("name")
 
 #### 2.3 参数绑定
 
-参数绑定利用反射机制，自动提起querystring，form表单，json，xml等参数到结构体中，可以极大提升开发效率。  
+参数绑定利用反射机制，自动提取querystring，form表单，json，xml等参数到结构体中，可以极大提升开发效率。  
 
 ```go
 package main
@@ -165,12 +159,14 @@ c.JSON(200,结构体)
 ```
 
 注意事项：不要使用编辑器的run功能，会出现路径错误，推荐使用命令build，项目路径分配如下：
-![](../images/Golang/gin-01.png)
+![](../images/go/gin-01.png)
 
 ## 五 文件上传
 
+### 5.1 单文件上传
+
 ```go
-func (c *gin.Context) {
+ router.POST("/upload", func (c *gin.Context) {
 	file, err := c.FormFile("file")
 	if (err != nil) {
 		c.JSON(http.StatusInternalServerError, gin.H{
@@ -183,5 +179,23 @@ func (c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"msg":"ok",
 	})
-}
+ })
+```
+
+### 5.2 多文件上传
+
+```go
+ router.POST("/upload", func(c *gin.Context) {
+        // 多文件
+        form, _ := c.MultipartForm()
+        files := form.File["upload[]"]
+
+        for _, file := range files {
+            log.Println(file.Filename)
+
+            // 上传文件到指定的路径
+            // c.SaveUploadedFile(file, dst)
+        }
+        c.String(http.StatusOK, fmt.Sprintf("%d files uploaded!", len(files)))
+    })
 ```
