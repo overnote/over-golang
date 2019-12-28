@@ -11,7 +11,7 @@ Go数据库标准包位于以下两个包中：
 #### 1.2 sql.Register
 sql.Register位于database/sql，用来注册数据库驱动当第三方开发者开发数据库驱动时，都会实现init函数，在init里面会调用这个`Register(name string, driver driver.Driver)`完成本驱动的注册。
 
-我们来看一下mymysql、sqlite3的驱动里面都是怎么调用的：
+我们来看一下mysql、sqlite3的驱动里面都是怎么调用的：
 ```Go
 
 //https://github.com/mattn/go-sqlite3驱动
