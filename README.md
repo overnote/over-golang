@@ -6,7 +6,7 @@
 
 ## 二 Go学习路径图
 
-![](./images/go/golang-developer-roadmap-zh-CN.png) 
+![](./images/go/go-develep.png) 
 
 ## 三 Go相关书籍
 

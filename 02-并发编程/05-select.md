@@ -1,44 +1,6 @@
-## 一 select的引入
+## 一 select的概念
 
-需要监听多个channel中的数据流动，如下所示：
-```go
-package main
-
-import (
-	"fmt"
-	"time"
-)
-
-func fn1(ch chan string) {
-	time.Sleep(time.Second * 3)
-	ch <- "fn1111"
-}
-
-func fn2(ch chan string) {
-	time.Sleep(time.Second * 6)
-	ch <- "fn2222"
-}
-
-
-func main() {
-
-	ch1 := make(chan string)
-	ch2 := make(chan string)
-
-	go fn1(ch1)
-	go fn2(ch2)
-
-	r1 := <- ch1
-	fmt.Println("r1=", r1)
-	r2 := <- ch2
-	fmt.Println("r2=", r2)
-}	
-
-```
-
-获取r1和r2的操作在串行执行，main函数整体耗时时间是fn2执行的时间：6秒，性能极差，也失去了并发意义。  
-
-Go语言中提供了 select关键字，可以同时响应多个通道的操作，在多个管道中随机选择一个能走通的路！   
+Go语言中的 select 关键字，可以同时响应多个通道的操作，在多个管道中随机选择一个能走通的路！   
 
 ```go
 select {
@@ -51,86 +13,50 @@ select {
 		没有操作的情况
 }
 ```
-select 的每个 case 都 会对应一个通道的收发过程。当收发完成时 ，就会触发 case 中响应的语句。
 
-
-## 二 select的使用
-
-#### 2.1 基本使用
-
-select用于监听channel上的数据流动，在有多个channel时，不会让其串行执行，在上一章中，可以使用select让获取ch1直接3秒钟内完成，获取ch2在6秒内完成！
-
+如果有这样的需求，两个管道中只要有一个管道能够取出数据，那么就使用该数据：
 ```go
+func fn1(ch chan string) {
+	time.Sleep(time.Second * 3)
+	ch <- "fn1111"
+}
+
+func fn2(ch chan string) {
+	time.Sleep(time.Second * 6)
+	ch <- "fn2222"
+}
+
 func main() {
 
 	ch1 := make(chan string)
-	ch2 := make(chan string)
-
 	go fn1(ch1)
+
+	ch2 := make(chan string)
 	go fn2(ch2)
 
 	select {
-
-	case r1 := <- ch1 :
-		fmt.Println("r1:", r1)
-
-	case r2 := <- ch2 :
-		fmt.Println("r2:", r2)
+	case r1 := <-ch1:
+		fmt.Println("r1=", r1)
+	case r2 := <-ch2:
+		fmt.Println("r2=", r2)
 	}
-
-}	
+}
 ```
 
-select同时监听多个channel，如果某个channel可读（有数据）则执行。如果多个channel同时可读（即上述fn1和fn2的延时时间都是3秒）那么随机读取一个channel的数据。  
+由于fn1延迟较低，则就会一直得到fn1的数据。
 
-select支持default，如果所有的case分支内都没有可读数据，那么执行default。  
+## 二 select的一些注意事项
+
+### 2.1 defautl
+
+select支持default，如果select没有一条语句可以执行，即所有的通道都被阻塞，那么有两种可能的情况：
+- 如果给出了default语句，执行default语句，同时程序性的执行会从select语句后的语句中恢复
+- 如果没有default语句，那么select语句将被阻塞，直到至少有一个通信可以进行下去
+- 所以一般不写default语句 
 
 当然，在一些场景中（for循环使用select获取channel数据），如果channel被写满，也可能会执行default。
 
-注意：select中的case必须是I/O操作。
-
-#### 2.2 select的作用
-
-在一个select语句中，Go会按顺序从头到尾评估每一个发送和接收的语句。如果其中任意一个语句可以继续执行，即没有被阻塞，那么就从那些可以被执行的语句中任意选择一条来使用。
-
-如果没有一条语句可以执行，即所有的通道都被阻塞，那么有两种可能的情况：
-- 如果给出了default语句，执行default语句，同时程序性的执行会从select语句后的语句中恢复
-- 如果没有default语句，那么select语句将被阻塞，直到至少有一个通信可以进行下去
-- 所以一般不写default语句
-
-```Go
-func fibonacci(ch chan<- int, quit<-chan bool) {
-	x, y := 1, 1
-	for {			//监听channel数据的流动
-		select {
-			case ch <- x:
-				x, y = y, x+y
-			case flag := <-quit:
-				fmt.Println("flag=", flag)
-			return
-		}
-	}
-}
-
-func main(){
-
-	ch := make(chan  int)		//数字通信
-	quit := make(chan bool)		//程序是否结束
-
-	//消费者，从channel读取内容
-	go func() {
-		for i := 0; i < 8; i++ {
-			num := <-ch
-			fmt.Println(num)
-		}
-		quit <- true
-	}()
-
-	//生产者，生产数字，写入channel
-	fibonacci(ch, quit)
-
-}
-```
+注意：select中的case必须是I/O操作。  
 
 #### 2.3 channel超时解决
 
@@ -142,24 +68,24 @@ i := <-ch
 
 利用select()可以实现超时处理：
 ```go
-timeout := make(chan bool, 1)
+	timeout := make(chan bool, 1)
 
-go func() {
-    time.Sleep(1e9)			// 等待1秒钟
-    timeout <- true
-}()
+	go func() {
+		time.Sleep(1e9)			// 等待1秒钟
+		timeout <- true
+	}()
 
-select {
-    case <-ch:      		// 能取到数据
-    case <-timeout: 		// 没有从-cha中取到数据，此时能从timeout中取得数据
-}
+	select {
+		case <-ch:      		// 能取到数据
+		case <-timeout: 		// 没有从-cha中取到数据，此时能从timeout中取得数据
+	}
 ```
 
 #### 2.4 空select
 
 空的select唯一的功能是阻塞代码：
 ```go
-select {}
+	select {}
 ```
 
 ## 三 select的一些案例
