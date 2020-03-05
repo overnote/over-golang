@@ -5,7 +5,7 @@ go的项目依赖管理一直饱受诟病，在go1.11后正式引入了`go modul
 `go mod` 初步使用：
 ```
 # 开启go mod
-export GO111MODULE=on
+export GO111MODULE=on			# 注意：如果是win，这里使用 set GO111MODULE=on
 
 # 在新建的项目根目录下（src）下使用该命令
 go mod init 项目名                      # 此时会生成一个go.mod文件
@@ -56,13 +56,15 @@ export PATH=$PATH:$GOPATH/bin               # go第三方二进制文件的环�
 从 Go 1.11 版本开始，还新增了 GOPROXY 环境变量，如果设置了该变量，下载源代码时将会通过这个环境变量设置的代理地址，而不再是以前的直接从代码库下载。goproxy.io 这个开源项目帮我们实现好了我们想要的。该项目允许开发者一键构建自己的 GOPROXY 代理服务。同时，也提供了公用的代理服务 https://goproxy.io，我们只需设置该环境变量即可正常下载被墙的源码包了：
 
 ```
-# 开发时设置Goland的Prefrence-Go-proxy即可
+# 如果使用的是IDEA，开发时设置Goland的Prefrence-Go-proxy即可
 
-# linux开启代理
-export GOPROXY=https://goproxy.io			# 注意：必须开启go modules才能使用，也可以选择其他镜像，如阿里云
+# 如果使用的是VSCode，则
+export GO111MODULE=on
+export GOPROXY=https://goproxy.io			
 
-# win开启代理
-$env:GOPROXY = "https://goproxy.io"
+# 如果是win，则：
+set GO111MODULE=on
+set GOPROXY=https://goproxy.io
 
 # 关闭代理
 export GOPROXY=
