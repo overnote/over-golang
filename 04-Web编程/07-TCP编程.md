@@ -14,7 +14,7 @@ func main() {
 
 	/**
 	Unix网络编程步骤：Server->Bind->Listen->Accept
-	Goo语言简化为了：Listen->Accept
+	Go语言简化为了：Listen->Accept
 	 */
 
 	// 此处创建了第一个套接字：设置了通信协议、IP地址、port
@@ -25,7 +25,7 @@ func main() {
 		return
 	}
 
-	// 此处创建了第二个套接字：用于阻塞监听客户端连接请求。注意listener并未监听，accept实现了家庭
+	// 此处创建了第二个套接字：用于阻塞监听客户端连接请求。注意listener并未监听，accept实现了监听
 	conn, err := listener.Accept()
 	defer conn.Close()			// 套接字也是文件，需要关闭
 	if err != nil {
