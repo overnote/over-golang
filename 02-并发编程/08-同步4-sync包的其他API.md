@@ -1,6 +1,6 @@
-## 二 Once 只执行一次
+## 一 Once 只执行一次
 
-sync包除了提供了互斥锁、读写锁、条件变量外，还提供了一个结构体：`sync.Once`，负责只执行一次，也即全局唯一操作。  
+sync包提供了互斥锁、读写锁、条件变量等常见并发场景需要的API。sync还有一些其他API，如结构体：`sync.Once`，负责只执行一次，也即全局唯一操作。  
 
 使用方式如下：
 ```go
@@ -57,11 +57,25 @@ func main() {
 }
 ```
 
-## 三 对象池 sync.Pool
+## 二 对象池 sync.Pool
 
-`sync.Pool`类型可以视为临时值的容器，该容器具备自动伸缩、高效特性，同时也是并发安全的，其方法有：
-- Get：从池中取出一个interface{}类型的值
-- Put：把一个interface{}类型的值存于池中
+`sync.Pool`可以作为临时值的容器，该容器具备自动伸缩、高效特性，同时也是并发安全的，其方法有：
+- Get：从池中取出一个值，类型为`interface{}`
+- Put：存储一个值到池中，存储的值类型为`interface{}`
+
+使用示例：
+```go
+	p := &sync.Pool{
+		New: func() interface{} {
+			return 0
+		},
+	}
+
+	a := p.Get().(int)
+	p.Put(1)
+	b := p.Get().(int)
+	fmt.Println(a, b) // 0 1
+```
 
 注意：
 - 如果池子从未Put过，其New字段也没有被赋值一个非nil值，那么Get方法返回结果一定是nil。  
@@ -72,38 +86,44 @@ func main() {
 - 对象池的Put方法会把参数值存放到本地P的本地池中，每个P的本地共享池中的值，都是共享的，即随时可能会被偷走
 - 对象池对垃圾回收友好，执行垃圾回收时，会将对象池中的对象值全部溢出
 
-应用场景：存储被分配了但是未被使用，未来可能会被使用的值，以减少GC的压力。  
-案例：由于fmt包总是使用一些`[]byte`对象，golang为期建立了一个临时对象池，存放这些对象，需要的时候，从pool中取，拿不到则分配一分，这样就能避免一直生成`[]byte`，垃圾回收的效率也高了很多。   
+应用场景：sync.Pool的定位不是做类似连接池的东西，仅仅是增加对象重用的几率，减少gc的负担，而开销方面也不是很便宜的。   
+
+案例：由于fmt包总是使用一些`[]byte`对象，可以为其建立了一个临时对象池，存放这些对象，需要的时候，从pool中取，拿不到则分配一份，这样就能避免一直生成`[]byte`，垃圾回收的效率也高了很多。   
 
 示例：
 ```go
-// 一个[]byte的对象池，每个对象为一个[]byte
-var bytePool = sync.Pool{
-  New: func() interface{} {
-    b := make([]byte, 1024)
-    return &b
-  },
+// 声明[]byte的对象池，每个对象为一个[]byte
+var BytePool = sync.Pool{
+	New: func() interface{} {
+		b := make([]byte, 1024)
+		return &b
+	},
 }
 
 func main() {
-  a := time.Now().Unix()
-  // 不使用对象池
-  for i := 0; i < 1000000000; i++{
-    obj := make([]byte,1024)
-    _ = obj
-  }
-  b := time.Now().Unix()
-  // 使用对象池
-  for i := 0; i < 1000000000; i++{
-    obj := bytePool.Get().(*[]byte)
-    _ = obj
-    bytePool.Put(obj)
-  }
-  c := time.Now().Unix()
-  fmt.Println("without pool ", b - a, "s")
-  fmt.Println("with    pool ", c - b, "s")
-}
 
-// without pool  34 s
-// with    pool  24 s
+	time1 := time.Now().Unix()
+
+	// 不使用对象池创建 10000000
+	obj1 := make([]byte, 1024)
+	for i := 0; i < 100000000; i++ {
+		obj1 = make([]byte, 1024)
+		_ = obj1
+	}
+
+	time2 := time.Now().Unix()
+
+	// 使用对象池创建 10010000
+	obj2 := BytePool.Get().(*[]byte)
+	for i := 0; i < 100000000; i++ {
+		obj2 = BytePool.Get().(*[]byte)
+		BytePool.Put(obj2)
+		_ = obj2
+	}
+
+	time3 := time.Now().Unix()
+
+	fmt.Println("without pool: ", time2-time1, "s") // 16s
+	fmt.Println("with    pool: ", time3-time2, "s") // 1s
+}
 ```
