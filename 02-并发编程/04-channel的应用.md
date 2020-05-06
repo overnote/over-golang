@@ -90,7 +90,7 @@ func main() {
 
 定时器`time.Timer`的底层其实也是一个管道。
 ```go
-tyoe Timer struct {
+type Timer struct {
     C <-chan Time
     r runtimeTimer
 }
