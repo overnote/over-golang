@@ -47,7 +47,7 @@ func main() {
 
 ## 二 select的一些注意事项
 
-### 2.1 defautl
+### 2.1 default
 
 select支持default，如果select没有一条语句可以执行，即所有的通道都被阻塞，那么有两种可能的情况：
 - 如果给出了default语句，执行default语句，同时程序性的执行会从select语句后的语句中恢复
