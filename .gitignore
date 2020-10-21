@@ -72,5 +72,5 @@ trunk/.idea/
 # production file
 dist/
 
-# go practile file
+# go practice file
 *.go
