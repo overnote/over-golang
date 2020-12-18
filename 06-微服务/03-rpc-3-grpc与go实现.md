@@ -60,7 +60,7 @@ package main
 
 import (
 	"fmt"
-	"golang.org/x/net/context"
+	"context"
 	"google.golang.org/grpc"
 	"net"
 	pb "test/protoes"
@@ -118,7 +118,7 @@ package main
 
 import (
 	"fmt"
-	"golang.org/x/net/context"
+	"context"
 	"google.golang.org/grpc"
 	pb "test/protoes"
 )
