@@ -3,7 +3,7 @@
 在golang的web开发中，一个handler响应一个http请求：
 ```go
 type Handler interface{
-    ServerHTTP(ResponseWriter, *Request)
+    ServeHTTP(ResponseWriter, *Request)
 }
 ```
 
