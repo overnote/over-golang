@@ -173,7 +173,7 @@ func main() {
 	reader := bufio.NewReader(file)
 	for {
 		str, err := reader.ReadString("\n")		//读到换行就结束一次
-		if err != io.EOF {						//io.EOF表示问价末尾
+		if err == io.EOF {						//io.EOF表示问价末尾
 			break
 		}
 		//输出内容
