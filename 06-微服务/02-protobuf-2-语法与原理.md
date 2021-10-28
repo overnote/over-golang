@@ -52,7 +52,7 @@ message Person {
 ```
 
 #### 2.4 枚举类型
-比如电话号码，只有移动电话、家庭电话、工作电话三种，因此枚举作为选项，如果没设置的话枚举类型的默认值为第一项。在上面的例子中在个人message中加入电话号码这个Filed。如果枚举类型中有不同的名字对应相同的数字id，需要加入option allow_alias = true这一项，否则会报错。枚举类型中也有reserverd Filed和number，定义和message中一样。
+比如电话号码，只有移动电话、家庭电话、工作电话三种，因此枚举作为选项，如果没设置的话枚举类型的默认值为第一项。在下面的例子中在个人message中加入电话号码这个Filed。如果枚举类型中有不同的名字对应相同的数字id，需要加入option allow_alias = true这一项，否则会报错。枚举类型中也有reserverd Filed和number，定义和message中一样。
 ```
 message Person {
   required string name = 1;
