@@ -58,7 +58,7 @@ select支持default，如果select没有一条语句可以执行，即所有的�
 
 注意：select中的case必须是I/O操作。  
 
-#### 2.3 channel超时解决
+#### 2.2 channel超时解决
 
 在并发编程的通信过程中，最需要处理的是超时问题，即向channel写数据时发现channel已满，或者取数据时发现channel为空，如果不正确处理这些情况，会导致goroutine锁死，例如：
 ```go
@@ -81,7 +81,7 @@ i := <-ch
 	}
 ```
 
-#### 2.4 空select
+#### 2.3 空select
 
 空的select唯一的功能是阻塞代码：
 ```go
