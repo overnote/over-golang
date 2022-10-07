@@ -99,7 +99,7 @@ type Timer struct {
 ```go
     // 创建定时器 定义延迟时间为2秒
 	layTimer := time.NewTimer(time.Second * 2)
-	// 从管道取数据，但是一直都是空的，阻塞中，直到2庙后有数据才能取出
+	// 从管道取数据，但是一直都是空的，阻塞中，直到2秒后有数据才能取出
 	fmt.Println(<-layTimer.C)
 ```
 
