@@ -14,20 +14,30 @@
 语法：
 
 - [《Go 程序设计语言》](https://book.douban.com/subject/27044219/)：Go 语言圣经，[中译资料](https://github.com/gopl-zh/gopl-zh.github.com)
-- [《Go 语言趣学指南》](https://book.douban.com/subject/34951096/)
-- [《Go 专家编程》](https://book.douban.com/subject/35144587/)
+- [《Go 语言趣学指南》](https://book.douban.com/subject/34951096/)：极简入门
+- [《Learning Go》](https://book.douban.com/subject/35128336/)
 
 实战：
 
-- [《GoWeb 编程》](https://book.douban.com/subject/27204133/)：Go 语言 Web 编程基础
-- [《Go 并发编程实战》](https://book.douban.com/subject/27016236/)：非常好的 go 并发原理解读书籍，但语言组织欠佳
-- [《Go 语言高并发与微服务实战》](https://book.douban.com/subject/35055766/)：试看中
-- [《Go 语言编程之旅：一起用 Go 做项目》](https://book.douban.com/subject/35130972/)：试看中
+- [《Go 语言编程之旅：一起用 Go 做项目》](https://book.douban.com/subject/)
 
 深入：
 
+- [《Go 并发编程实战》](https://book.douban.com/subject/27016236/)：非常好的 go 并发原理解读书籍，但语言组织欠佳
+- [《Go 专家编程》](https://book.douban.com/subject/35144587/)
+- [《Go 语言精进之路》](https://book.douban.com/subject/35720728/)
 - [《Go 语言学习笔记》](https://book.douban.com/subject/26832468/)：言简意赅，深入浅出，力荐
 - [《Go 语言高级编程》](https://book.douban.com/subject/34442131/)：深入理解 Go 必备，[开源文档](https://github.com/chai2010/advanced-go-programming-book)
+
+仍然处于试看阶段书籍：
+
+- [《Go 语言底层原理剖析》](https://book.douban.com/subject/35556889/)：试看中
+- [《Go 语言设计与实现》](https://book.douban.com/subject/35635836/)：试看中
+- [《精通 Go 语言（第 2 版）》](https://item.jd.com/13543938.html#none)：试看中
+  35130972/)：试看中
+- [《GO 微服务实战》](https://book.douban.com/subject/35381916/)：试看中
+- [《Go 语言从基础到中台微服务实战开发》](https://item.jd.com/10034293424182.html)：试看中
+- [《深入学习 Go 语言》](https://book.douban.com/subject/34798021/)
 
 ## 附录：笔记汇总
 
